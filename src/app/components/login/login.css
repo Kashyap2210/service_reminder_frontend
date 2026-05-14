@@ -1,0 +1,93 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  font-family: 'DM Sans', sans-serif;
+  background: #0d0d0d;
+  color: #ffffff;
+}
+
+.page-shell {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: #0d0d0d;
+}
+
+.card {
+  width: 100%;
+  max-width: 380px;
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  padding: 40px;
+  box-sizing: border-box;
+}
+
+.card h1 {
+  margin: 0 0 24px;
+  font-size: 1.9rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.field label {
+  color: #d0d0d0;
+  font-size: 0.95rem;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  background: #111111;
+  color: #ffffff;
+  border: 1px solid #2a2a2a;
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 1rem;
+}
+
+.field input:focus,
+.field select:focus {
+  outline: none;
+  border-color: #6ee7b7;
+}
+
+.submit-button {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: none;
+  background: #6ee7b7;
+  color: #0d0d0d;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+.submit-button:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+}
+
+.error-message {
+  color: #f87171;
+  margin-top: 18px;
+}
+
+.footer-text {
+  margin-top: 24px;
+  color: #c4c4c4;
+  font-size: 0.95rem;
+}
+
+.footer-text a {
+  color: #6ee7b7;
+  text-decoration: none;
+}
