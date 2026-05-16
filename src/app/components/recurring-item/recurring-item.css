@@ -1,0 +1,64 @@
+:host {
+  display: block;
+}
+
+.page-shell {
+  min-height: 100vh;
+  padding: 40px 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 24px;
+}
+
+h1 {
+  font-size: 1.9rem;
+}
+
+.items-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.items-table th,
+.items-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #2a2a2a;
+  text-align: left;
+  color: #c4c4c4;
+}
+
+.items-table th {
+  color: #ffffff;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.items-table tr:last-child td {
+  border-bottom: none;
+}
+
+.items-table tr:hover td {
+  background: rgba(110, 231, 183, 0.05);
+}
+
+.empty-state {
+  color: #c4c4c4;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 480px) {
+  .page-shell {
+    padding: 24px 16px;
+  }
+
+  .items-table {
+    display: block;
+    overflow-x: auto;
+  }
+}
+
+app-recurring-item-form {
+  width: 100%;
+}

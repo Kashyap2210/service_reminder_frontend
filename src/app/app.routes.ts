@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { EntityList } from 'service_reminder_common';
 
 export const routes: Routes = [
   {
@@ -10,6 +11,11 @@ export const routes: Routes = [
     path: 'profile',
     loadComponent: () =>
       import('./components/user-profile/user-profile').then((m) => m.UserProfile),
+  },
+  {
+    path: EntityList.RECURRING_ITEM,
+    loadComponent: () =>
+      import('./components/recurring-item/recurring-item').then((m) => m.RecurringItem),
   },
   {
     path: 'login',

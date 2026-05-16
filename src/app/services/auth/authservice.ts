@@ -25,6 +25,8 @@ export class AuthService {
   }
 
   setSession(user?: IUserEntity, token?: string) {
+    console.log(user);
+    console.log(token);
     if (user) {
       this.currentUser.set(user);
       localStorage.setItem('user', JSON.stringify(user));

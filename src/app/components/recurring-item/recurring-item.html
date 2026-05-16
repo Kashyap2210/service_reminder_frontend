@@ -1,0 +1,46 @@
+<div class="page-shell">
+  <h1>Recurring Items</h1>
+
+  @if (!isFormOpen) {
+    <button (click)="onClickOpenForm()">
+      <app-generic-button btnClass="submit-button"> Add Recurring Item </app-generic-button>
+    </button>
+  }
+
+  @if (isFormOpen) {
+    <div class="margin-left-auto">
+      <app-cancel-button [handler]="onClickCloseForm" />
+    </div>
+    <app-recurring-item-form [submitHandler]="onSubmit" />
+  }
+  @if (error()) {
+    <p class="error-message">{{ error() }}</p>
+  }
+
+  @if (items().length) {
+    <table class="items-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Company</th>
+          <th>Service Period</th>
+          <th>Created On</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of items(); track item.id) {
+          <tr>
+            <td>{{ item.name }}</td>
+            <td>{{ item.type }}</td>
+            <td>{{ item.companyName || '-' }}</td>
+            <td>{{ item.servicePeriod }}</td>
+            <td>{{ item.createdOn }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  } @else {
+    <p class="empty-state">No recurring items found.</p>
+  }
+</div>

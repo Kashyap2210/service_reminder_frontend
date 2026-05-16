@@ -8,13 +8,7 @@ import { LoginFormComponent } from './login-form.model';
 
 @Component({
   selector: 'app-login',
-  imports: [
-    RouterLink,
-    ReactiveFormsModule,
-    // GenericButtonComponent,
-    // GenericInputComponent,
-    LoginFormComponent,
-  ],
+  imports: [RouterLink, ReactiveFormsModule, LoginFormComponent],
   templateUrl: './login.html',
   styleUrls: ['./login.css'],
 })
@@ -26,18 +20,13 @@ export class Login {
   error = signal('');
 
   onSubmit = (reqBody: ILoginDto) => {
-    // this.form.markAllAsTouched();
-    // if (this.form.invalid) return;
-
-    console.log('reqBody', reqBody);
-
     this.error.set('');
     const { name, password } = reqBody;
 
     return this.authService.login(name, password).pipe(
       tap((res: ILoginResponse) => {
         this.authService.setSession(res.currentUser, res.accessToken);
-        this.router.navigate(['/profile']);
+        this.router.navigate(['/recurring_item']);
       }),
       catchError((err) => {
         this.error.set(err.error?.message || err.error?.[0]?.message || 'Login Failed');

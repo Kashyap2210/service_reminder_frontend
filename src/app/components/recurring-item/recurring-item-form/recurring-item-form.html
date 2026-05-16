@@ -1,0 +1,20 @@
+<form [formGroup]="form" (ngSubmit)="onClickSubmit()">
+  <div class="form-row">
+    <app-generic-input label="Name" controlName="name" placeholder="Enter name" />
+    <app-generic-input label="Type" controlName="type" placeholder="Enter type" />
+  </div>
+  <div class="form-row">
+    <app-generic-input
+      label="Company Name"
+      controlName="companyName"
+      placeholder="Enter company name"
+    />
+    <app-generic-input
+      label="Service Period"
+      controlName="servicePeriod"
+      type="number"
+      placeholder="Enter service period"
+    />
+  </div>
+  <app-generic-button [handler]="onClickSubmit" btnClass="submit-button"> Save </app-generic-button>
+</form>
