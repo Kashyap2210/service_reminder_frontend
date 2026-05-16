@@ -29,7 +29,7 @@
   margin: 0 0 24px;
   font-size: 1.9rem;
 }
-
+/* 
 .field {
   display: flex;
   flex-direction: column;
@@ -74,7 +74,7 @@
 .submit-button:disabled {
   opacity: 0.75;
   cursor: not-allowed;
-}
+} */
 
 .error-message {
   color: #f87171;

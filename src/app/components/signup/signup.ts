@@ -1,14 +1,14 @@
 import { Component, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { catchError, tap, throwError } from 'rxjs';
 import { IUserCreateDto, UserRole } from 'service_reminder_common';
 import { AuthService } from '../../services/auth/authservice';
-import { GenericButtonComponent } from '../../shared/generic-button/generic-button';
+import { SignupFormComponent, SignupFormValue } from './signup-form.model';
 
 @Component({
   selector: 'app-signup',
-  imports: [FormsModule, RouterLink, GenericButtonComponent],
+  imports: [RouterLink, ReactiveFormsModule, SignupFormComponent],
   templateUrl: './signup.html',
   styleUrls: ['./signup.css'],
 })
@@ -16,40 +16,32 @@ export class Signup {
   private router = inject(Router);
   private authService = inject(AuthService);
 
-  name = signal('');
-  email = signal('');
-  password = signal('');
-  contactNo = signal('');
-  // role = signal('USER');
-  loading = signal(false);
+  // loading = signal(false);
   error = signal('');
   success = signal(false);
 
-  onSubmit = () => {
+  onSubmit = (reqBody: SignupFormValue) => {
+    // Mark all fields touched so errors show on first submit attempt
+    // this.form.markAllAsTouched();
+    // if (this.form.invalid) return;
+
     this.error.set('');
 
-    return this.authService.signup(this.userSignUpRequestBody).pipe(
-      tap(() => {
-        this.success.set(true);
-      }),
+    const body: IUserCreateDto = {
+      ...reqBody,
+      role: UserRole.USER,
+    };
+
+    return this.authService.signup(body).pipe(
+      tap(() => this.success.set(true)),
       catchError((err) => {
         this.error.set(err.error?.message || err.error?.[0]?.message || 'Signup failed');
-
         return throwError(() => err);
       }),
     );
   };
+
   navigateToLogin() {
     this.router.navigate(['/login']);
-  }
-
-  get userSignUpRequestBody(): IUserCreateDto {
-    return {
-      name: this.name(),
-      email: this.email(),
-      password: this.password(),
-      contactNo: this.contactNo(),
-      role: UserRole.USER,
-    };
   }
 }

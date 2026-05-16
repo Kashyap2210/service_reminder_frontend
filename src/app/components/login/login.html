@@ -2,29 +2,10 @@
   <div class="card">
     <h1>Welcome Back</h1>
 
-    <div class="field">
-      <label for="name">Name</label>
-      <input
-        id="name"
-        type="text"
-        [value]="name()"
-        (input)="name.set($any($event.target).value)"
-        placeholder="Enter your name"
-      />
-    </div>
-
-    <div class="field">
-      <label for="password">Password</label>
-      <input
-        id="password"
-        type="password"
-        [value]="password()"
-        (input)="password.set($any($event.target).value)"
-        placeholder="Enter your password"
-      />
-    </div>
-
-    <app-generic-button [handler]="onSubmit" btnClass="submit-button"> Login </app-generic-button>
+    <app-login-form [submitHandler]="onSubmit" />
+    @if (error()) {
+      <p class="error-message">{{ error() }}</p>
+    }
 
     <p class="footer-text">
       Don't have an account?

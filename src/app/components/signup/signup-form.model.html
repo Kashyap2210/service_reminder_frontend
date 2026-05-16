@@ -1,0 +1,24 @@
+<form [formGroup]="form">
+  <app-generic-input label="Name" controlName="name" placeholder="Enter your name" />
+  <app-generic-input
+    label="Email"
+    controlName="email"
+    type="email"
+    placeholder="Enter your email"
+  />
+  <app-generic-input
+    label="Password"
+    controlName="password"
+    type="password"
+    placeholder="Enter your password"
+  />
+  <app-generic-input
+    label="Contact No"
+    controlName="contactNo"
+    placeholder="Enter your 10-digit number"
+  />
+
+  <app-generic-button [handler]="handleSubmit" btnClass="submit-button">
+    Sign Up
+  </app-generic-button>
+</form>

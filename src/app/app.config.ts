@@ -4,6 +4,8 @@ import { provideClientHydration, withEventReplay } from '@angular/platform-brows
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
+import { VALIDATION_MESSAGES } from './validation/validation-messages';
+import { VALIDATION_MESSAGES_TOKEN } from './validation/validation-messages.token';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -11,5 +13,6 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withFetch()),
     provideRouter(routes),
     provideClientHydration(withEventReplay()),
+    { provide: VALIDATION_MESSAGES_TOKEN, useValue: VALIDATION_MESSAGES },
   ],
 };
