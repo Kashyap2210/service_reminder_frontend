@@ -37,7 +37,7 @@ export class Login {
     return this.authService.login(name, password).pipe(
       tap((res: ILoginResponse) => {
         this.authService.setSession(res.currentUser, res.accessToken);
-        this.router.navigate(['/']);
+        this.router.navigate(['/profile']);
       }),
       catchError((err) => {
         this.error.set(err.error?.message || err.error?.[0]?.message || 'Login Failed');

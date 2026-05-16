@@ -1,0 +1,27 @@
+<div class="page-shell">
+  <div class="card">
+    <h1>User Profile</h1>
+
+    <div class="profile-field">
+      <span class="label">Name</span>
+      <span class="value">{{ user()?.name }}</span>
+    </div>
+
+    <div class="profile-field">
+      <span class="label">Email</span>
+      <span class="value">{{ user()?.email }}</span>
+    </div>
+
+    <div class="profile-field">
+      <span class="label">Contact No</span>
+      <span class="value">{{ user()?.contactNo }}</span>
+    </div>
+
+    <div class="profile-field">
+      <span class="label">Role</span>
+      <span class="value">{{ user()?.role }}</span>
+    </div>
+
+    <button class="logout-button" (click)="logout()">Logout</button>
+  </div>
+</div>

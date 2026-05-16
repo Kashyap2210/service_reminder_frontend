@@ -35,10 +35,20 @@ export class AuthService {
     }
   }
 
-  logout() {
+  getCurrentUser(): IUserEntity | null {
+    const raw = localStorage.getItem('user');
+    return raw ? JSON.parse(raw) : null;
+  }
+
+  clearSession() {
     this.currentUser.set(null);
     this.token.set('');
+    localStorage.removeItem('user');
     localStorage.removeItem('token');
-    this.router.navigate(['/']);
+  }
+
+  logout() {
+    this.clearSession();
+    this.router.navigate(['/login']);
   }
 }
