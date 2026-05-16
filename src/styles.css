@@ -1,3 +1,131 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import 'tailwindcss';
+
+/* ── Google Font Import ── */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap');
+
+/* ── Breakpoints (use in media queries) ──
+   xs:  480px
+   sm:  768px
+   md:  1024px
+   lg:  1280px
+─────────────────────────────────────────── */
+
+/* ── Global Reset / Base ── */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: #0d0d0d;
+  color: #ffffff;
+  min-height: 100vh;
+}
+
+/* ── Shared Layout ── */
+.page-shell {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: #0d0d0d;
+}
+
+/* on very small screens remove side padding so card fills width */
+@media (max-width: 480px) {
+  .page-shell {
+    padding: 16px;
+    align-items: flex-start;
+    padding-top: 32px;
+  }
+}
+
+/* ── Shared Card ── */
+.card {
+  width: 100%;
+  max-width: 380px;
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  padding: 40px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 480px) {
+  .card {
+    padding: 28px 20px;
+    border-radius: 10px;
+  }
+}
+
+.card h1 {
+  margin: 0 0 24px;
+  font-size: 1.9rem;
+}
+
+@media (max-width: 480px) {
+  .card h1 {
+    font-size: 1.6rem;
+  }
+}
+
+/* ── Shared Typography ── */
+.error-message {
+  color: #f87171;
+  margin-top: 18px;
+  font-size: 0.9rem;
+}
+
+.footer-text {
+  margin-top: 24px;
+  color: #c4c4c4;
+  font-size: 0.95rem;
+}
+
+.footer-text a {
+  color: #6ee7b7;
+  text-decoration: none;
+}
+
+.footer-text a:hover {
+  text-decoration: underline;
+}
+
+/* ── Shared Button ── */
+.submit-button {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: none;
+  background: #6ee7b7;
+  color: #0d0d0d;
+  font-size: 1rem;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 4px;
+  transition:
+    background 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.submit-button:hover {
+  background: #4dd4a0;
+}
+
+.submit-button:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+  .submit-button {
+    padding: 14px; /* slightly taller tap target on mobile */
+    font-size: 1rem;
+  }
+}
