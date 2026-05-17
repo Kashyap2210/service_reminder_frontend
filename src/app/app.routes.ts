@@ -24,6 +24,11 @@ export const routes: Routes = [
       import('./components/recurring-item/recurring-item').then((m) => m.RecurringItem),
   },
   {
+    path: EntityList.APPOINTMENT,
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/appointment/appointment').then((m) => m.Appointment),
+  },
+  {
     path: 'login',
     loadComponent: () => import('./components/login/login').then((m) => m.Login),
   },

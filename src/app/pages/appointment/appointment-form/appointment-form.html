@@ -1,0 +1,38 @@
+<form [formGroup]="form" (ngSubmit)="onClickSubmit()">
+  <div class="form-row">
+    <app-generic-input
+      label="Appointment Date"
+      controlName="appointmentDate"
+      type="date"
+      placeholder="Select appointment date"
+    />
+    <app-generic-select
+      label="Appointment Type"
+      controlName="appointmentType"
+      placeholder="Select appointment type"
+      [options]="appointmentTypeOptions"
+    />
+  </div>
+
+  <div class="form-row">
+    <app-generic-input
+      label="Vendor ID"
+      controlName="vendorId"
+      type="number"
+      placeholder="Enter vendor id"
+    />
+    <app-generic-input
+      label="Recurring Item ID"
+      controlName="recurringItemId"
+      type="number"
+      placeholder="Enter recurring item id"
+    />
+    <app-generic-input
+      label="Check Points"
+      controlName="checkPoints"
+      placeholder="Enter check points"
+    />
+  </div>
+
+  <app-generic-button [handler]="onClickSubmit" btnClass="submit-button"> Save </app-generic-button>
+</form>

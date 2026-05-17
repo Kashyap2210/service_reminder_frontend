@@ -9,7 +9,9 @@
         <a routerLink="/recurring_item" routerLinkActive="active" class="nav-link">
           Recurring Items
         </a>
-        <!-- TODO: Add more links here as needed -->
+        <a [routerLink]="['/', appointmentRoute]" routerLinkActive="active" class="nav-link">
+          Appointments
+        </a>
       </div>
 
       <!-- Profile Dropdown (Far Right) -->

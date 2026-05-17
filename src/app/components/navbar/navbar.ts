@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { IUserEntity } from 'service_reminder_common';
+import { EntityList, IUserEntity } from 'service_reminder_common';
 import { AuthService } from '../../services/auth/authservice';
 import { SelectOption } from '../../shared/generic-dropdown/generic-dropdown';
 
@@ -19,6 +19,8 @@ export class Navbar implements OnInit {
   private authService = inject(AuthService);
 
   currentUser: IUserEntity | null = null;
+
+  appointmentRoute = EntityList.APPOINTMENT;
 
   profileForm!: FormGroup;
   profileOptions: SelectOption[] = [
