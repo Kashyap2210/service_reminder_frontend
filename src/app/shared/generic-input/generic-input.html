@@ -1,11 +1,21 @@
 <div class="field" [class.has-error]="!!errorMessage">
   <label [for]="controlName()">{{ label() }}</label>
-  <input
-    [id]="controlName()"
-    [type]="type()"
-    [placeholder]="placeholder()"
-    [formControlName]="controlName()"
-  />
+  @if (type() === 'number') {
+    <input
+      [id]="controlName()"
+      type="number"
+      [placeholder]="placeholder()"
+      [formControlName]="controlName()"
+      (change)="onNumberChange($event)"
+    />
+  } @else {
+    <input
+      [id]="controlName()"
+      [type]="type()"
+      [placeholder]="placeholder()"
+      [formControlName]="controlName()"
+    />
+  }
   @if (errorMessage) {
     <span class="error-hint">{{ errorMessage }}</span>
   }

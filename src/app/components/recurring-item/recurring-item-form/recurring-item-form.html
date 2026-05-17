@@ -15,6 +15,12 @@
       type="number"
       placeholder="Enter service period"
     />
+    <app-generic-select
+      label="Service Period Unit"
+      controlName="servicePeriodUnit"
+      placeholder="Select unit"
+      [options]="servicePeriodOptions"
+    />
   </div>
   <app-generic-button [handler]="onClickSubmit" btnClass="submit-button"> Save </app-generic-button>
 </form>

@@ -35,4 +35,9 @@ export class GenericInputComponent implements OnInit {
     const resolver = this.messages[key];
     return resolver ? resolver(val) : 'Invalid value';
   }
+
+  onNumberChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.control.setValue(input.valueAsNumber); // always a real number
+  }
 }

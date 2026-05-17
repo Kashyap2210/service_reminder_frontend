@@ -33,13 +33,34 @@ export class RecurringItem {
 
   isFormOpen = false;
   currentUser: IUserEntity = {} as IUserEntity;
+  editingItem: IRecurringItemEntity | null = null;
 
   onClickOpenForm() {
+    this.editingItem = null;
     this.isFormOpen = true;
   }
 
   onClickCloseForm = () => {
     this.isFormOpen = false;
+    this.editingItem = null;
+  };
+
+  onClickEdit = (item: IRecurringItemEntity) => {
+    this.editingItem = item;
+    this.isFormOpen = true;
+    this.error.set('');
+  };
+
+  onClickDelete = (id: number) => {
+    this.error.set('');
+    this.recurringItemService.delete(id).subscribe({
+      next: () => {
+        this.items.update((items) => items.filter((i) => i.id !== id));
+      },
+      error: (err) => {
+        this.error.set(err.error?.message || 'Unable to delete recurring item.');
+      },
+    });
   };
 
   constructor() {}
@@ -69,21 +90,33 @@ export class RecurringItem {
   }
 
   onSubmit = (value: IRecurringItemCreateDto) => {
-    this.isFormOpen = false;
     this.error.set('');
-    return this.recurringItemService
-      .create({
-        ...value,
-        servicePeriodUnit: ServicePeriodUnit.MONTHS,
-        userId: this.currentUser.id,
-      })
-      .pipe(
-        tap(() => this.loadItems()),
-        catchError((err) => {
-          this.error.set(err.error?.message || 'Unable to save recurring item.');
-          return throwError(() => err);
-        }),
-      );
+
+    const request$ = this.editingItem
+      ? this.recurringItemService.update(this.editingItem.id, value)
+      : this.recurringItemService.create({
+          ...value,
+          servicePeriodUnit: ServicePeriodUnit.MONTHS,
+          userId: this.currentUser.id,
+        });
+
+    this.isFormOpen = false;
+    this.editingItem = null;
+
+    return request$.pipe(
+      tap((savedItem) => {
+        this.items.update((items) => {
+          const idx = items.findIndex((i) => i.id === savedItem.id);
+          return idx !== -1
+            ? items.map((i) => (i.id === savedItem.id ? savedItem : i)) // update existing
+            : [savedItem, ...items]; // prepend new
+        });
+      }),
+      catchError((err) => {
+        this.error.set(err.error?.message || 'Unable to save recurring item.');
+        return throwError(() => err);
+      }),
+    );
   };
 
   readableDateFromEpoch(epochDate: number) {

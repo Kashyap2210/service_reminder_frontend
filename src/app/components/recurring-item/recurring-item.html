@@ -16,7 +16,7 @@
   </div>
 
   @if (isFormOpen) {
-    <app-recurring-item-form [submitHandler]="onSubmit" />
+    <app-recurring-item-form [submitHandler]="onSubmit" [initialValue]="editingItem" />
   }
   @if (error()) {
     <p class="error-message">{{ error() }}</p>
@@ -32,6 +32,7 @@
           <th>Service Period</th>
           <th>Service Period Unit</th>
           <th>Created On Epoch</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -43,6 +44,14 @@
             <td>{{ item.servicePeriod }}</td>
             <td>{{ item.servicePeriodUnit }}</td>
             <td>{{ +item.createdOn | date: 'dd MMM yyyy, HH:mm' }}</td>
+            <td class="actions-cell">
+              <button class="action-btn edit-btn" (click)="onClickEdit(item)" title="Edit">
+                ✏️
+              </button>
+              <button class="action-btn delete-btn" (click)="onClickDelete(item.id)" title="Delete">
+                🗑️
+              </button>
+            </td>
           </tr>
         }
       </tbody>
