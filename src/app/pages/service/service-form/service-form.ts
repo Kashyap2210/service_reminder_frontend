@@ -73,7 +73,7 @@ export class ServiceFormComponent {
     serviceEstimate: new FormControl<number | null>(0, {
       nonNullable: false,
     }),
-    serviceAmount: new FormControl<number | null>(null, {
+    serviceAmount: new FormControl<number | null>(0, {
       nonNullable: false,
     }),
     invoiceDocument: new FormControl<string | null>(null, {
