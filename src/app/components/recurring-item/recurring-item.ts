@@ -1,7 +1,9 @@
+import { DatePipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, tap, throwError } from 'rxjs';
 import {
+  DateUtil,
   IRecurringItemCreateDto,
   IRecurringItemEntity,
   IRecurringItemSearchDto,
@@ -17,7 +19,7 @@ import { RecurringItemFormComponent } from './recurring-item-form/recurring-item
 @Component({
   selector: 'app-recurring-item',
   standalone: true,
-  imports: [RecurringItemFormComponent, GenericButtonComponent, CancelButtonComponent],
+  imports: [RecurringItemFormComponent, GenericButtonComponent, CancelButtonComponent, DatePipe],
   templateUrl: './recurring-item.html',
   styleUrls: ['./recurring-item.css'],
 })
@@ -33,16 +35,14 @@ export class RecurringItem {
   currentUser: IUserEntity = {} as IUserEntity;
 
   onClickOpenForm() {
-    return (this.isFormOpen = true);
+    this.isFormOpen = true;
   }
 
   onClickCloseForm = () => {
     this.isFormOpen = false;
   };
 
-  constructor() {
-    // effect(() => this.loadItems());
-  }
+  constructor() {}
 
   ngOnInit() {
     this.currentUser = this.authService.getCurrentUser()!;
@@ -85,4 +85,9 @@ export class RecurringItem {
         }),
       );
   };
+
+  readableDateFromEpoch(epochDate: number) {
+    console.log(DateUtil.toReadable(epochDate));
+    return DateUtil.toReadable(epochDate);
+  }
 }

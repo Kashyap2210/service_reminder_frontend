@@ -127,3 +127,9 @@ body {
     font-size: 1rem;
   }
 }
+
+@layer components {
+  .flex-between-center {
+    @apply w-full flex justify-between items-center;
+  }
+}
