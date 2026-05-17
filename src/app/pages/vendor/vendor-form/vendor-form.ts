@@ -1,10 +1,7 @@
 import { Component, input } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
-import {
-  IVendorCreateDto,
-  IVendorEntity,
-} from 'service_reminder_common';
+import { IVendorCreateDto, IVendorEntity } from 'service_reminder_common';
 import { GenericButtonComponent } from '../../../shared/generic-button/generic-button';
 import { GenericInputComponent } from '../../../shared/generic-input/generic-input';
 
@@ -13,11 +10,7 @@ type VendorFormValue = IVendorCreateDto;
 @Component({
   selector: 'app-vendor-form',
   standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    GenericInputComponent,
-    GenericButtonComponent,
-  ],
+  imports: [ReactiveFormsModule, GenericInputComponent, GenericButtonComponent],
   templateUrl: './vendor-form.html',
   styleUrls: ['./vendor-form.css'],
 })
