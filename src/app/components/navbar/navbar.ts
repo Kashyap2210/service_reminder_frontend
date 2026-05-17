@@ -20,7 +20,9 @@ export class Navbar implements OnInit {
 
   currentUser: IUserEntity | null = null;
 
+  recurringItemRoute = EntityList.RECURRING_ITEM;
   appointmentRoute = EntityList.APPOINTMENT;
+  serviceRoute = EntityList.SERVICE;
 
   profileForm!: FormGroup;
   profileOptions: SelectOption[] = [

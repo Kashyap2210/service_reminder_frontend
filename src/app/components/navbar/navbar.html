@@ -6,11 +6,14 @@
     <!-- Nav Links (Center) -->
     @if (currentUser) {
       <div class="nav-links">
-        <a routerLink="/recurring_item" routerLinkActive="active" class="nav-link">
+        <a [routerLink]="['/', recurringItemRoute]" routerLinkActive="active" class="nav-link">
           Recurring Items
         </a>
         <a [routerLink]="['/', appointmentRoute]" routerLinkActive="active" class="nav-link">
           Appointments
+        </a>
+        <a [routerLink]="['/', serviceRoute]" routerLinkActive="active" class="nav-link">
+          Services
         </a>
       </div>
 

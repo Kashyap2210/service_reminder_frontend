@@ -1,0 +1,57 @@
+<form [formGroup]="form" (ngSubmit)="onClickSubmit()">
+  <div class="form-row">
+    <app-generic-input
+      label="Service Date"
+      controlName="serviceDate"
+      type="date"
+      placeholder="Select date"
+    />
+    <app-generic-select
+      label="Service Type"
+      controlName="serviceType"
+      placeholder="Select service type"
+      [options]="serviceTypeOptions"
+    />
+  </div>
+  <div class="form-row">
+    <app-generic-input
+      label="Recurring Item ID"
+      controlName="recurringItemId"
+      type="number"
+      placeholder="Enter recurring item ID"
+    />
+    <app-generic-input
+      label="Vendor ID"
+      controlName="vendorId"
+      type="number"
+      placeholder="Enter vendor ID"
+    />
+    <app-generic-input
+      label="Appointment ID"
+      controlName="appointmentId"
+      type="number"
+      placeholder="Enter appointment ID (optional)"
+    />
+  </div>
+  <div class="form-row">
+    <app-generic-input
+      label="Service Estimate"
+      controlName="serviceEstimate"
+      type="number"
+      placeholder="Enter estimate (optional)"
+    />
+    <app-generic-input
+      label="Service Amount"
+      controlName="serviceAmount"
+      type="number"
+      placeholder="Enter amount (optional)"
+    />
+    <app-generic-input
+      label="Invoice Document"
+      controlName="invoiceDocument"
+      type="text"
+      placeholder="Enter document (optional)"
+    />
+  </div>
+  <app-generic-button [handler]="onClickSubmit" btnClass="submit-button"> Save </app-generic-button>
+</form>

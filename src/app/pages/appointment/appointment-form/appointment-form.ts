@@ -64,7 +64,6 @@ export class AppointmentFormComponent {
           ? `${rawDate.slice(0, 4)}-${rawDate.slice(4, 6)}-${rawDate.slice(6, 8)}`
           : '';
 
-      console.log('formattedDate', formattedDate);
 
       this.form.patchValue({
         appointmentDate: formattedDate,

@@ -29,6 +29,11 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/appointment/appointment').then((m) => m.Appointment),
   },
   {
+    path: EntityList.SERVICE,
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/service/service').then((m) => m.Service),
+  },
+  {
     path: 'login',
     loadComponent: () => import('./components/login/login').then((m) => m.Login),
   },

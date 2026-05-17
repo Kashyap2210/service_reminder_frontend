@@ -1,0 +1,64 @@
+<div class="page-shell">
+  <div class="flex-between-center">
+    <div>
+      <h1>Services</h1>
+    </div>
+
+    <div>
+      @if (!isFormOpen) {
+        <button (click)="onClickOpenForm()">
+          <app-generic-button btnClass="submit-button"> Add Service </app-generic-button>
+        </button>
+      } @else {
+        <app-cancel-button [handler]="onClickCloseForm" />
+      }
+    </div>
+  </div>
+
+  @if (isFormOpen) {
+    <app-service-form [submitHandler]="onSubmit" [initialValue]="editingItem" />
+  }
+  @if (error()) {
+    <p class="error-message">{{ error() }}</p>
+  }
+
+  @if (items().length) {
+    <table class="items-table">
+      <thead>
+        <tr>
+          <th>Service Date</th>
+          <th>Service Type</th>
+          <th>Recurring Item ID</th>
+          <th>Vendor ID</th>
+          <th>Service Estimate</th>
+          <th>Service Amount</th>
+          <th>Invoice Document</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of items(); track item.id) {
+          <tr>
+            <td>{{ item.formattedServiceDate }}</td>
+            <td>{{ item.serviceType }}</td>
+            <td>{{ item.recurringItemId }}</td>
+            <td>{{ item.vendorId }}</td>
+            <td>{{ item.serviceEstimate | currency: 'INR' }}</td>
+            <td>{{ item.serviceAmount | currency: 'INR' }}</td>
+            <td>{{ item.invoiceDocument || '-' }}</td>
+            <td class="actions-cell">
+              <button class="action-btn edit-btn" (click)="onClickEdit(item)" title="Edit">
+                ✏️
+              </button>
+              <button class="action-btn delete-btn" (click)="onClickDelete(item.id)" title="Delete">
+                🗑️
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  } @else {
+    <p class="empty-state">No services found.</p>
+  }
+</div>
