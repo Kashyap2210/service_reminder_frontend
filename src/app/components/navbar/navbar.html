@@ -1,0 +1,39 @@
+<nav class="navbar flex justify-between">
+  <!-- App Name (Left) -->
+  <div class="app-name">Service Reminder</div>
+
+  <div class="flex justify-between gap-2">
+    <!-- Nav Links (Center) -->
+    @if (currentUser) {
+      <div class="nav-links">
+        <a routerLink="/recurring_item" routerLinkActive="active" class="nav-link">
+          Recurring Items
+        </a>
+        <!-- TODO: Add more links here as needed -->
+      </div>
+
+      <!-- Profile Dropdown (Far Right) -->
+      <div class="profile-dropdown" [formGroup]="profileForm">
+        <div class="profile-dropdown">
+          <button type="button" class="profile-trigger" (click)="toggleProfileMenu()">
+            <mat-icon>person</mat-icon>
+          </button>
+
+          @if (isProfileMenuOpen) {
+            <div class="profile-menu">
+              <button class="menu-item" (click)="onClickProfile()">
+                <mat-icon>account_circle</mat-icon>
+                Profile
+              </button>
+
+              <button class="menu-item logout" (click)="onClickLogout()">
+                <mat-icon>logout</mat-icon>
+                Logout
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</nav>

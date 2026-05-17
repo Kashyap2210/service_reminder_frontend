@@ -31,7 +31,17 @@ body {
   align-items: center;
   justify-content: center;
   padding: 24px;
+  padding-top: calc(56px + 24px); /* 56px navbar + original 24px */
   background: #0d0d0d;
+}
+
+/* on very small screens remove side padding so card fills width */
+@media (max-width: 480px) {
+  .page-shell {
+    padding: 16px;
+    padding-top: calc(56px + 16px); /* 56px navbar + original 16px */
+    align-items: flex-start;
+  }
 }
 
 /* on very small screens remove side padding so card fills width */

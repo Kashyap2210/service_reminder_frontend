@@ -9,6 +9,7 @@ import {
   signal,
 } from '@angular/core';
 import { AbstractControl, ControlContainer, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { MatIcon } from '@angular/material/icon';
 import { VALIDATION_MESSAGES_TOKEN } from '../../validation/validation-messages.token';
 
 export interface SelectOption {
@@ -18,7 +19,7 @@ export interface SelectOption {
 
 @Component({
   selector: 'app-generic-select',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, MatIcon],
   templateUrl: './generic-dropdown.html',
   styleUrl: './generic-dropdown.scss',
   viewProviders: [
@@ -35,7 +36,7 @@ export class GenericSelectComponent implements OnInit {
 
   label = input<string>('');
   controlName = input.required<string>();
-  placeholder = input<string>('Select an option');
+  placeholder = input<string>('');
   options = input.required<SelectOption[]>();
 
   control!: AbstractControl;
