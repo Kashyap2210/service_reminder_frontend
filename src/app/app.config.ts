@@ -10,7 +10,7 @@ import { VALIDATION_MESSAGES_TOKEN } from './validation/validation-messages.toke
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideHttpClient(withFetch()),
+    // provideHttpClient(withFetch()),
     provideRouter(routes),
     // provideClientHydration(withEventReplay(), withNoHttpTransferCache()),
     { provide: VALIDATION_MESSAGES_TOKEN, useValue: VALIDATION_MESSAGES },

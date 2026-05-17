@@ -43,6 +43,7 @@ export class AuthService {
   }
 
   clearSession() {
+    // console.trace('clearSession called'); // 👈 will show full call stack
     this.currentUser.set(null);
     this.token.set('');
     localStorage.removeItem('user');

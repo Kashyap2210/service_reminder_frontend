@@ -45,8 +45,9 @@ export class RecurringItem {
   }
 
   ngOnInit() {
-    this.loadItems();
     this.currentUser = this.authService.getCurrentUser()!;
+    // console.log('this.currentUser', this.currentUser);
+    this.loadItems();
   }
 
   loadItems() {
@@ -56,6 +57,7 @@ export class RecurringItem {
         this.error.set('');
       },
       error: (err) => {
+        console.log('error', err);
         if (err?.status === 401) {
           this.router.navigate(['/login']);
           return;

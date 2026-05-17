@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { EntityList } from 'service_reminder_common';
+import { authGuard } from '../guards/auth.guard';
 
 export const routes: Routes = [
   {
@@ -14,6 +15,7 @@ export const routes: Routes = [
   },
   {
     path: EntityList.RECURRING_ITEM,
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./components/recurring-item/recurring-item').then((m) => m.RecurringItem),
   },
