@@ -1,0 +1,15 @@
+<div class="page-shell">
+  <div class="card">
+    <h1>Welcome Back</h1>
+
+    <app-login-form [submitHandler]="onSubmit" />
+    @if (error()) {
+      <p class="error-message">{{ error() }}</p>
+    }
+
+    <p class="footer-text">
+      Don't have an account?
+      <a [routerLink]="['/signup']">Sign up</a>
+    </p>
+  </div>
+</div>

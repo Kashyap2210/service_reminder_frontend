@@ -1,0 +1,19 @@
+<div class="page-shell">
+  <div class="card">
+    <h1>Create Account</h1>
+
+    @if (success()) {
+      <div class="success-message">Account created! <a [routerLink]="['/login']">Login</a></div>
+    }
+
+    @if (!success()) {
+      <app-signup-form [submitHandler]="onSubmit" />
+
+      @if (error()) {
+        <p class="error-message">{{ error() }}</p>
+      }
+    }
+
+    <p class="footer-text">Already have an account? <a [routerLink]="['/login']">Login</a></p>
+  </div>
+</div>

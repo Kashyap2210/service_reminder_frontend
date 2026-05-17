@@ -1,0 +1,48 @@
+.profile-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 20px;
+}
+
+.label {
+  color: #888888;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.value {
+  color: #ffffff;
+  font-size: 1rem;
+  word-break: break-all;
+}
+
+.logout-button {
+  width: 100%;
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: none;
+  background: #f87171;
+  color: #0d0d0d;
+  font-size: 1rem;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.logout-button:hover {
+  background: #ef4444;
+}
+
+@media (max-width: 480px) {
+  .logout-button {
+    padding: 14px;
+  }
+
+  .value {
+    font-size: 0.95rem;
+  }
+}

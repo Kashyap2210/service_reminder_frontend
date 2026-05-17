@@ -1,0 +1,13 @@
+<form [formGroup]="form" (ngSubmit)="onClickSubmit()">
+  <app-generic-input label="Name" controlName="name" placeholder="Enter your name" />
+  <app-generic-input
+    label="Password"
+    controlName="password"
+    type="password"
+    placeholder="Enter your password"
+  />
+
+  <app-generic-button [handler]="onClickSubmit" btnClass="submit-button">
+    Login
+  </app-generic-button>
+</form>

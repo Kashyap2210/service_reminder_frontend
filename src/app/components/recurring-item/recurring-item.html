@@ -1,0 +1,62 @@
+<div class="page-shell">
+  <div class="flex-between-center">
+    <div>
+      <h1>Recurring Items</h1>
+    </div>
+
+    <div>
+      @if (!isFormOpen) {
+        <button (click)="onClickOpenForm()">
+          <app-generic-button btnClass="submit-button"> Add Recurring Item </app-generic-button>
+        </button>
+      } @else {
+        <app-cancel-button [handler]="onClickCloseForm" />
+      }
+    </div>
+  </div>
+
+  @if (isFormOpen) {
+    <app-recurring-item-form [submitHandler]="onSubmit" [initialValue]="editingItem" />
+  }
+  @if (error()) {
+    <p class="error-message">{{ error() }}</p>
+  }
+
+  @if (items().length) {
+    <table class="items-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Company</th>
+          <th>Service Period</th>
+          <th>Service Period Unit</th>
+          <th>Created On Epoch</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of items(); track item.id) {
+          <tr>
+            <td>{{ item.name }}</td>
+            <td>{{ item.type }}</td>
+            <td>{{ item.companyName || '-' }}</td>
+            <td>{{ item.servicePeriod }}</td>
+            <td>{{ item.servicePeriodUnit }}</td>
+            <td>{{ +item.createdOn | date: 'dd MMM yyyy, HH:mm' }}</td>
+            <td class="actions-cell">
+              <button class="action-btn edit-btn" (click)="onClickEdit(item)" title="Edit">
+                ✏️
+              </button>
+              <button class="action-btn delete-btn" (click)="onClickDelete(item.id)" title="Delete">
+                🗑️
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  } @else {
+    <p class="empty-state">No recurring items found.</p>
+  }
+</div>
