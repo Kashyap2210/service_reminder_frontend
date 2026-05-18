@@ -4,10 +4,14 @@ import { Router } from '@angular/router';
 import { catchError, tap, throwError } from 'rxjs';
 import {
   DateUtil,
+  EntityFilterDataHelper,
+  EntityList,
+  IEntityFilterSearchData,
+  IEntityFilterSearchDataV2,
   IRecurringItemCreateDto,
   IRecurringItemEntity,
-  IRecurringItemSearchDto,
   IUserEntity,
+  RecurringItemModel,
   ServicePeriodUnit,
 } from 'service_reminder_common';
 import { AuthService } from '../../services/auth/authservice';
@@ -28,7 +32,7 @@ export class RecurringItem {
   private router = inject(Router);
   private authService = inject(AuthService);
 
-  items = signal<IRecurringItemEntity[]>([]);
+  items = signal<RecurringItemModel[]>([]);
   error = signal('');
 
   isFormOpen = false;
@@ -72,9 +76,29 @@ export class RecurringItem {
   }
 
   loadItems() {
-    this.recurringItemService.search({} as IRecurringItemSearchDto).subscribe({
-      next: (items) => {
-        this.items.set(items);
+    const userRelationConfig: IEntityFilterSearchData<EntityList.USER> = {
+      name: EntityList.USER,
+    };
+
+    const filter: IEntityFilterSearchDataV2<EntityList.RECURRING_ITEM> = {
+      name: EntityList.RECURRING_ITEM,
+      filter: {
+        include: {
+          userId: [this.currentUser.id],
+        },
+        relations: [userRelationConfig],
+      },
+    };
+
+    this.recurringItemService.baseSearch(filter).subscribe({
+      next: (searchResponse) => {
+        console.log('searchResponse', searchResponse);
+        const filterDataHelper = new EntityFilterDataHelper(searchResponse);
+
+        filterDataHelper.populateRelationsFor([EntityList.RECURRING_ITEM]);
+        console.log('filterDataHelper', filterDataHelper);
+
+        this.items.set(filterDataHelper.getEntityFromList(EntityList.RECURRING_ITEM));
         this.error.set('');
       },
       error: (err) => {
@@ -108,8 +132,10 @@ export class RecurringItem {
         this.items.update((items) => {
           const idx = items.findIndex((i) => i.id === savedItem.id);
           return idx !== -1
-            ? items.map((i) => (i.id === savedItem.id ? savedItem : i)) // update existing
-            : [savedItem, ...items]; // prepend new
+            ? items.map((i) =>
+                i.id === savedItem.id ? RecurringItemModel.populateFromEntity(savedItem) : i,
+              ) // update existing
+            : [RecurringItemModel.populateFromEntity(savedItem), ...items]; // prepend new
         });
       }),
       catchError((err) => {
