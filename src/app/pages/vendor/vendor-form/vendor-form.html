@@ -1,0 +1,15 @@
+<form [formGroup]="form" (ngSubmit)="onClickSubmit()">
+  <div class="form-row">
+    <app-generic-input label="Name" controlName="name" placeholder="Enter name" />
+    <app-generic-input
+      label="Contact No"
+      controlName="contactNo"
+      placeholder="Enter contact number"
+    />
+  </div>
+  <div class="form-row">
+    <app-generic-input label="Email" controlName="email" type="email" placeholder="Enter email" />
+    <app-generic-input label="Address" controlName="address" placeholder="Enter address" />
+  </div>
+  <app-generic-button [handler]="onClickSubmit" btnClass="submit-button"> Save </app-generic-button>
+</form>

@@ -34,6 +34,11 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/service/service').then((m) => m.Service),
   },
   {
+    path: EntityList.VENDOR,
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/vendor/vendor').then((m) => m.Vendor),
+  },
+  {
     path: 'login',
     loadComponent: () => import('./components/login/login').then((m) => m.Login),
   },
