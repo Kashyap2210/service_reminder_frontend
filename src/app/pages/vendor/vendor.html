@@ -1,0 +1,60 @@
+<div class="page-shell">
+  <div class="flex-between-center">
+    <div>
+      <h1>Vendors</h1>
+    </div>
+
+    <div>
+      @if (!isFormOpen) {
+        <button (click)="onClickOpenForm()">
+          <app-generic-button btnClass="submit-button"> Add Vendor </app-generic-button>
+        </button>
+      } @else {
+        <app-cancel-button [handler]="onClickCloseForm" />
+      }
+    </div>
+  </div>
+
+  @if (isFormOpen) {
+    <app-vendor-form [submitHandler]="onSubmit" [initialValue]="editingItem" />
+  }
+  @if (error()) {
+    <p class="error-message">{{ error() }}</p>
+  }
+
+  @if (items().length) {
+    <table class="items-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Contact No</th>
+          <th>Email</th>
+          <th>Address</th>
+          <th>Created On</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of items(); track item.id) {
+          <tr>
+            <td>{{ item.name }}</td>
+            <td>{{ item.contactNo }}</td>
+            <td>{{ item.email || '-' }}</td>
+            <td>{{ item.address }}</td>
+            <td>{{ +item.createdOn | date: 'dd MMM yyyy, HH:mm' }}</td>
+            <td class="actions-cell">
+              <button class="action-btn edit-btn" (click)="onClickEdit(item)" title="Edit">
+                ✏️
+              </button>
+              <button class="action-btn delete-btn" (click)="onClickDelete(item.id)" title="Delete">
+                🗑️
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  } @else {
+    <p class="empty-state">No vendors found.</p>
+  }
+</div>

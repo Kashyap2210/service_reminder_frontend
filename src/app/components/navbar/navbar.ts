@@ -21,6 +21,7 @@ export class Navbar implements OnInit {
   currentUser: IUserEntity | null = null;
 
   appointmentRoute = EntityList.APPOINTMENT;
+  vendorRoute = EntityList.VENDOR;
 
   profileForm!: FormGroup;
   profileOptions: SelectOption[] = [
