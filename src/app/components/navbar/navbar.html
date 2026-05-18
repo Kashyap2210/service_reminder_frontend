@@ -4,7 +4,7 @@
 
   <div class="flex justify-between gap-2">
     <!-- Nav Links (Center) -->
-    @if (currentUser) {
+    @if (currentUser()) {
       <div class="nav-links">
         <a [routerLink]="['/', recurringItemRoute]" routerLinkActive="active" class="nav-link">
           Recurring Items
