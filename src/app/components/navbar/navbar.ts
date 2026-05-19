@@ -1,8 +1,8 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, computed, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { EntityList, IUserEntity } from 'service_reminder_common';
+import { EntityList } from 'service_reminder_common';
 import { AuthService } from '../../services/auth/authservice';
 import { SelectOption } from '../../shared/generic-dropdown/generic-dropdown';
 
@@ -18,9 +18,11 @@ export class Navbar implements OnInit {
   private router = inject(Router);
   private authService = inject(AuthService);
 
-  currentUser: IUserEntity | null = null;
+  currentUser = computed(() => this.authService.currentUser());
 
+  recurringItemRoute = EntityList.RECURRING_ITEM;
   appointmentRoute = EntityList.APPOINTMENT;
+  serviceRoute = EntityList.SERVICE;
   vendorRoute = EntityList.VENDOR;
 
   profileForm!: FormGroup;
@@ -31,7 +33,7 @@ export class Navbar implements OnInit {
   isProfileMenuOpen = false;
 
   ngOnInit() {
-    this.currentUser = this.authService.getCurrentUser()!;
+    // this.currentUser = this.authService.getCurrentUser()!;
     this.profileForm = this.fb.group({
       action: [''],
     });
