@@ -18,10 +18,6 @@ export class RecurringItemService extends BaseService {
   // private http = inject(HttpClient);
   private baseUrl = `http://localhost:3000/api/v1/${EntityList.RECURRING_ITEM}`;
 
-  override getBaseUrl(): string {
-    return `http://localhost:3000/api/v1`;
-  }
-
   search(dto: IRecurringItemSearchDto): Observable<IRecurringItemEntity[]> {
     return this.http.post<IRecurringItemEntity[]>(`${this.baseUrl}/search`, dto);
   }

@@ -14,8 +14,6 @@ export abstract class BaseService {
   //   }
 
   baseSearch(dto: IEntityFilterSearchData<typeof this.entityName>): Observable<ISearchV2Response> {
-    return this.http.post<ISearchV2Response>(`${this.getBaseUrl()}/entity/search`, dto);
+    return this.http.post<ISearchV2Response>(`http://localhost:3000/api/v1/entity/search`, dto);
   }
-
-  abstract getBaseUrl(): string;
 }

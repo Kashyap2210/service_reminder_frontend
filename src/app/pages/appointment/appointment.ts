@@ -4,11 +4,14 @@ import { Router } from '@angular/router';
 import { catchError, tap, throwError } from 'rxjs';
 import {
   AppointmentAction,
+  AppointmentModel,
   DateCodeUtils,
+  EntityFilterDataHelper,
+  EntityList,
   IAppointmentCreateDto,
-  IAppointmentEntity,
-  IAppointmentSearchDto,
   IAppointmentUpdateDto,
+  IEntityFilterSearchData,
+  IEntityFilterSearchDataV2,
   IUserEntity,
 } from 'service_reminder_common';
 import { AppointmentService } from '../../services/appointment/appointment.service';
@@ -29,12 +32,13 @@ export class Appointment {
   private router = inject(Router);
   private authService = inject(AuthService);
 
-  items = signal<IAppointmentEntity[]>([]);
+  items = signal<AppointmentModel[]>([]);
   error = signal('');
 
   isFormOpen = false;
   currentUser: IUserEntity = {} as IUserEntity;
-  editingItem: IAppointmentEntity | null = null;
+  editingItem: AppointmentModel | null = null;
+  filterDataHelper: EntityFilterDataHelper = {} as EntityFilterDataHelper;
 
   onClickOpenForm() {
     this.editingItem = null;
@@ -46,7 +50,7 @@ export class Appointment {
     this.editingItem = null;
   };
 
-  onClickEdit = (item: IAppointmentEntity) => {
+  onClickEdit = (item: AppointmentModel) => {
     this.editingItem = item;
     console.log('this.editingItem', this.editingItem);
     this.isFormOpen = true;
@@ -73,9 +77,36 @@ export class Appointment {
   }
 
   loadItems() {
-    this.appointmentService.search({} as IAppointmentSearchDto).subscribe({
-      next: (items) => {
-        this.items.set(items);
+    const vendorRelationConfig: IEntityFilterSearchData<EntityList.VENDOR> = {
+      name: EntityList.VENDOR,
+    };
+
+    const userRelationConfig: IEntityFilterSearchData<EntityList.USER> = {
+      name: EntityList.USER,
+    };
+
+    const recurringItemRelationConfig: IEntityFilterSearchData<EntityList.RECURRING_ITEM> = {
+      name: EntityList.RECURRING_ITEM,
+    };
+
+    const filter: IEntityFilterSearchDataV2<EntityList.APPOINTMENT> = {
+      name: EntityList.APPOINTMENT,
+      filter: {
+        include: {
+          userId: [this.currentUser.id],
+        },
+        relations: [userRelationConfig, vendorRelationConfig, recurringItemRelationConfig],
+      },
+    };
+
+    this.appointmentService.baseSearch(filter).subscribe({
+      next: (searchResponse) => {
+        const filterDataHelper = new EntityFilterDataHelper(searchResponse);
+        filterDataHelper.populateRelationsFor([EntityList.APPOINTMENT]);
+
+        this.filterDataHelper = filterDataHelper;
+
+        this.items.set(filterDataHelper.entityModelsMap[EntityList.APPOINTMENT]);
         this.error.set('');
       },
       error: (err) => {
@@ -107,11 +138,15 @@ export class Appointment {
 
     return request$.pipe(
       tap((savedItem) => {
+        const savedModel = this.filterDataHelper
+          ? this.filterDataHelper.mergeEntity(EntityList.APPOINTMENT, savedItem)
+          : AppointmentModel.populateFromEntity(savedItem);
+
         this.items.update((items) => {
           const idx = items.findIndex((i) => i.id === savedItem.id);
           return idx !== -1
-            ? items.map((i) => (i.id === savedItem.id ? savedItem : i))
-            : [savedItem, ...items];
+            ? items.map((i) => (i.id === savedItem.id ? savedModel : i))
+            : [savedModel, ...items];
         });
       }),
       catchError((err) => {
