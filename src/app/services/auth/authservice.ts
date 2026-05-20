@@ -8,7 +8,7 @@ export class AuthService {
   private router = inject(Router);
   private http = inject(HttpClient);
 
-  currentUser = signal<any>(null);
+  currentUser = signal<IUserEntity | null>(this.getCurrentUser());
   token = signal<string>('');
   private baseUrl = 'http://localhost:3000/api/v1';
 
