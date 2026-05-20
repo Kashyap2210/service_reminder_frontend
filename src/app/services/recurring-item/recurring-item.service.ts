@@ -1,5 +1,4 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import {
   EntityList,
@@ -8,10 +7,15 @@ import {
   IRecurringItemSearchDto,
   IRecurringItemUpdateDto,
 } from 'service_reminder_common';
+import { BaseService } from '../../shared/shared.service';
 
 @Injectable({ providedIn: 'root' })
-export class RecurringItemService {
-  private http = inject(HttpClient);
+export class RecurringItemService extends BaseService {
+  constructor() {
+    super(EntityList.RECURRING_ITEM);
+  }
+
+  // private http = inject(HttpClient);
   private baseUrl = `http://localhost:3000/api/v1/${EntityList.RECURRING_ITEM}`;
 
   search(dto: IRecurringItemSearchDto): Observable<IRecurringItemEntity[]> {

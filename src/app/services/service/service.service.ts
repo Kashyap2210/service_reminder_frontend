@@ -1,5 +1,4 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import {
   EntityList,
@@ -8,10 +7,15 @@ import {
   IServiceSearchDto,
   IServiceUpdateDto,
 } from 'service_reminder_common';
+import { BaseService } from '../../shared/shared.service';
 
 @Injectable({ providedIn: 'root' })
-export class ServiceApiService {
-  private http = inject(HttpClient);
+export class ServiceApiService extends BaseService {
+  constructor() {
+    super(EntityList.SERVICE);
+  }
+
+  // private http = inject(HttpClient);
   private baseUrl = `http://localhost:3000/api/v1/${EntityList.SERVICE}`;
 
   search(dto: IServiceSearchDto): Observable<IServiceEntity[]> {

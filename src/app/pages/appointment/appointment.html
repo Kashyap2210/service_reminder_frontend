@@ -41,8 +41,8 @@
             <td>{{ getAppointmentDateFormatted(item.appointmentDate) }}</td>
             <td>{{ item.appointmentType }}</td>
             <td>{{ item.appointmentStatus }}</td>
-            <td>{{ item.vendorId }}</td>
-            <td>{{ item.recurringItemId }}</td>
+            <td>{{ item.vendorName }}</td>
+            <td>{{ item.recurringItemName }}</td>
             <td>{{ +item.createdOn | date: 'dd MMM yyyy, HH:mm' }}</td>
             <td class="actions-cell">
               <button class="action-btn edit-btn" (click)="onClickEdit(item)" title="Edit">
