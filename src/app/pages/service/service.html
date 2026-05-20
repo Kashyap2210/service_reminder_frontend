@@ -28,8 +28,8 @@
         <tr>
           <th>Service Date</th>
           <th>Service Type</th>
-          <th>Recurring Item ID</th>
-          <th>Vendor ID</th>
+          <th>Recurring Item</th>
+          <th>Vendor</th>
           <th>Service Estimate</th>
           <th>Service Amount</th>
           <th>Invoice Document</th>
@@ -39,10 +39,10 @@
       <tbody>
         @for (item of items(); track item.id) {
           <tr>
-            <td>{{ item.formattedServiceDate }}</td>
+            <td>{{ getFormatted(item.serviceDate) }}</td>
             <td>{{ item.serviceType }}</td>
-            <td>{{ item.recurringItemId }}</td>
-            <td>{{ item.vendorId }}</td>
+            <td>{{ item.recurringItemName }}</td>
+            <td>{{ item.vendorName }}</td>
             <td>{{ item.serviceEstimate | currency: 'INR' }}</td>
             <td>{{ item.serviceAmount | currency: 'INR' }}</td>
             <td>{{ item.invoiceDocument || '-' }}</td>

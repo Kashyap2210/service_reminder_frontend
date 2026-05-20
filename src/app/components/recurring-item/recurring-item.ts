@@ -92,11 +92,9 @@ export class RecurringItem {
 
     this.recurringItemService.baseSearch(filter).subscribe({
       next: (searchResponse) => {
-        console.log('searchResponse', searchResponse);
         const filterDataHelper = new EntityFilterDataHelper(searchResponse);
 
         filterDataHelper.populateRelationsFor([EntityList.RECURRING_ITEM]);
-        console.log('filterDataHelper', filterDataHelper);
 
         this.items.set(filterDataHelper.getEntityFromList(EntityList.RECURRING_ITEM));
         this.error.set('');

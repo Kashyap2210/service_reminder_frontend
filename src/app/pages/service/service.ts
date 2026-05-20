@@ -4,11 +4,15 @@ import { Router } from '@angular/router';
 import { catchError, tap, throwError } from 'rxjs';
 import {
   DateCodeUtils,
+  EntityFilterDataHelper,
+  EntityList,
+  IEntityFilterSearchData,
+  IEntityFilterSearchDataV2,
   IServiceCreateDto,
-  IServiceEntity,
-  IServiceSearchDto,
   IUserEntity,
+  Nullable,
   ServiceAction,
+  ServiceModel,
 } from 'service_reminder_common';
 import { AuthService } from '../../services/auth/authservice';
 import { ServiceApiService } from '../../services/service/service.service';
@@ -28,12 +32,13 @@ export class Service {
   private router = inject(Router);
   private authService = inject(AuthService);
 
-  items = signal<(IServiceEntity & { formattedServiceDate: string })[]>([]);
+  items = signal<ServiceModel[]>([]);
   error = signal('');
 
   isFormOpen = false;
   currentUser: IUserEntity = {} as IUserEntity;
-  editingItem: IServiceEntity | null = null;
+  editingItem: ServiceModel | null = null;
+  filterDataHelper: EntityFilterDataHelper = {} as EntityFilterDataHelper;
 
   onClickOpenForm() {
     this.editingItem = null;
@@ -45,7 +50,7 @@ export class Service {
     this.editingItem = null;
   };
 
-  onClickEdit = (item: IServiceEntity) => {
+  onClickEdit = (item: ServiceModel) => {
     this.editingItem = item;
     this.isFormOpen = true;
     this.error.set('');
@@ -71,9 +76,39 @@ export class Service {
   }
 
   loadItems() {
-    this.serviceService.search({} as IServiceSearchDto).subscribe({
-      next: (items) => {
-        this.items.set(this.getServiceEntitiesWithFormattedDate(items));
+    const vendorRelationConfig: IEntityFilterSearchData<EntityList.VENDOR> = {
+      name: EntityList.VENDOR,
+    };
+    const recurringItemRelationConfig: IEntityFilterSearchData<EntityList.RECURRING_ITEM> = {
+      name: EntityList.RECURRING_ITEM,
+    };
+
+    const userRelationConfig: IEntityFilterSearchData<EntityList.USER> = {
+      name: EntityList.USER,
+    };
+
+    const filter: IEntityFilterSearchDataV2<EntityList.SERVICE> = {
+      name: EntityList.SERVICE,
+      filter: {
+        include: {
+          userId: [this.currentUser.id],
+        },
+        relations: [userRelationConfig, vendorRelationConfig, recurringItemRelationConfig],
+      },
+    };
+
+    this.serviceService.baseSearch(filter).subscribe({
+      next: (searchResponse) => {
+        const filterDataHelper = new EntityFilterDataHelper(searchResponse);
+        filterDataHelper.populateRelationsFor([
+          EntityList.SERVICE,
+          EntityList.USER,
+          EntityList.APPOINTMENT,
+        ]);
+
+        this.filterDataHelper = filterDataHelper;
+
+        this.items.set(filterDataHelper.entityModelsMap[EntityList.SERVICE]);
         this.error.set('');
       },
       error: (err) => {
@@ -103,13 +138,15 @@ export class Service {
 
     return request$.pipe(
       tap((savedItem) => {
+        const savedModel = this.filterDataHelper
+          ? this.filterDataHelper.mergeEntity(EntityList.SERVICE, savedItem)
+          : ServiceModel.populateFromEntity(savedItem);
+
         this.items.update((items) => {
           const idx = items.findIndex((i) => i.id === savedItem.id);
           return idx !== -1
-            ? this.getServiceEntitiesWithFormattedDate(
-                items.map((i) => (i.id === savedItem.id ? savedItem : i)),
-              ) // update existing
-            : this.getServiceEntitiesWithFormattedDate([savedItem, ...items]); // prepend new
+            ? items.map((i) => (i.id === savedItem.id ? savedModel : i))
+            : [savedModel, ...items];
         });
       }),
       catchError((err) => {
@@ -119,14 +156,8 @@ export class Service {
     );
   };
 
-  getFormatted(date: string | number) {
+  getFormatted(date: Nullable<number>) {
+    if (!date) return null;
     return new DateCodeUtils(date).toLongDateString();
-  }
-
-  getServiceEntitiesWithFormattedDate(serviceEntites: IServiceEntity[]) {
-    return serviceEntites.map((entity) => ({
-      ...entity,
-      formattedServiceDate: this.getFormatted(entity.serviceDate),
-    }));
   }
 }
