@@ -1,0 +1,20 @@
+<div class="select-wrapper" [class.open]="isOpen()">
+  <button type="button" class="select-trigger" (click)="toggle()">
+    <span class="placeholder">{{ triggerLabel() }}</span>
+    <mat-icon class="chevron">expand_more</mat-icon>
+  </button>
+
+  @if (isOpen()) {
+    <div class="dropdown-panel">
+      <ul class="options-list">
+        @for (item of items(); track item.value) {
+          <li class="option" [class.danger]="item.danger" (click)="select(item)">
+            {{ item.label }}
+          </li>
+        } @empty {
+          <li class="option no-results">No actions available</li>
+        }
+      </ul>
+    </div>
+  }
+</div>
