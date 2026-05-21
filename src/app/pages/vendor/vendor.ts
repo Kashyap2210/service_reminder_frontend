@@ -132,6 +132,7 @@ export class Vendor {
             ? items.map((item) => (item.id === savedModel.id ? savedModel : item))
             : [...items, savedModel];
         });
+        this.loadItems();
       }),
       catchError((err) => {
         this.error.set(err.error?.message || 'Unable to save vendor.');

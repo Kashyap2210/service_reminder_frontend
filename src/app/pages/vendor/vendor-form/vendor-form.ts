@@ -2,9 +2,11 @@ import { Component, input, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import {
+  definedValues,
   EntityFilterDataHelper,
   EntityList,
   IVendorCreateDto,
+  Nullable,
   VendorModel,
 } from 'service_reminder_common';
 import { GenericButtonComponent } from '../../../shared/generic-button/generic-button';
@@ -31,7 +33,7 @@ type VendorFormValue = IVendorCreateDto;
 export class VendorFormComponent implements OnInit {
   entityFilterDataHelper = input.required<EntityFilterDataHelper>();
   submitHandler = input.required<(value: IVendorCreateDto) => Observable<any>>();
-  initialValue = input<VendorModel | null>(null);
+  initialValue = input<Nullable<VendorModel>>(null);
 
   recurringItemOptions: SelectOption<number>[] = [];
 
@@ -45,11 +47,14 @@ export class VendorFormComponent implements OnInit {
     if (val) {
       // Get preselected recurring item IDs using the vendorModel's relation mapping
       const vendorModel = val;
-      const preselectedIds = (
-        (vendorModel[EntityList.VENDOR_RECURRING_ITEM_MAPPING] as any[]) || []
-      )
-        .map((mapping) => mapping[EntityList.RECURRING_ITEM]?.id)
-        .filter((id): id is number => id !== undefined && id !== null);
+
+      console.log('vendorModel', vendorModel);
+
+      const preselectedIds = definedValues(
+        (vendorModel[EntityList.VENDOR_RECURRING_ITEM_MAPPING] || []).map(
+          (mapping) => mapping[EntityList.RECURRING_ITEM]?.id,
+        ),
+      );
 
       this.form.patchValue({
         name: val.name,
