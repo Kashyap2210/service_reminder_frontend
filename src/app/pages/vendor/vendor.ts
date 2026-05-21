@@ -5,6 +5,7 @@ import { catchError, tap, throwError } from 'rxjs';
 import {
   EntityFilterDataHelper,
   EntityList,
+  IEntityFilterSearchData,
   IEntityFilterSearchDataV2,
   IUserEntity,
   IVendorCreateDto,
@@ -73,13 +74,22 @@ export class Vendor {
   }
 
   loadItems() {
-    const recurringItemEntityConfig: IEntityFilterSearchDataV2<EntityList.RECURRING_ITEM> = {
+    const recurringItemEntityConfig: IEntityFilterSearchData<EntityList.RECURRING_ITEM> = {
       name: EntityList.RECURRING_ITEM,
+      include: {
+        userId: [this.currentUser.id],
+      },
     };
+
+    const vendorRecurringItemEntityConfig: IEntityFilterSearchData<EntityList.VENDOR_RECURRING_ITEM_MAPPING> =
+      {
+        name: EntityList.VENDOR_RECURRING_ITEM_MAPPING,
+      };
 
     const filterData: IEntityFilterSearchDataV2<EntityList.VENDOR> = {
       name: EntityList.VENDOR,
       filter: {
+        relations: [vendorRecurringItemEntityConfig],
         entities: [recurringItemEntityConfig],
       },
     };
@@ -87,7 +97,11 @@ export class Vendor {
     this.vendorService.baseSearch(filterData).subscribe({
       next: (searchResponse) => {
         const filterDataHelper = new EntityFilterDataHelper(searchResponse);
-        filterDataHelper.populateRelationsFor([EntityList.VENDOR, EntityList.RECURRING_ITEM]);
+        filterDataHelper.populateRelationsFor([
+          EntityList.VENDOR,
+          EntityList.RECURRING_ITEM,
+          EntityList.VENDOR_RECURRING_ITEM_MAPPING,
+        ]);
 
         this.filterDataHelper = filterDataHelper;
         this.items.set(filterDataHelper.entityModelsMap[EntityList.VENDOR]);
