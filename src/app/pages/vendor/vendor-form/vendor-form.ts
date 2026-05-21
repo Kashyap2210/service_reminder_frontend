@@ -1,7 +1,7 @@
 import { Component, input } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { IVendorCreateDto, IVendorEntity } from 'service_reminder_common';
+import { IVendorCreateDto, VendorModel } from 'service_reminder_common';
 import { GenericButtonComponent } from '../../../shared/generic-button/generic-button';
 import { GenericInputComponent } from '../../../shared/generic-input/generic-input';
 
@@ -16,7 +16,7 @@ type VendorFormValue = IVendorCreateDto;
 })
 export class VendorFormComponent {
   submitHandler = input.required<(value: VendorFormValue) => Observable<any>>();
-  initialValue = input<IVendorEntity | null>(null);
+  initialValue = input<VendorModel | null>(null);
 
   ngOnInit() {
     const val = this.initialValue();

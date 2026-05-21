@@ -3,10 +3,13 @@ import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, tap, throwError } from 'rxjs';
 import {
+  EntityFilterDataHelper,
+  EntityList,
+  IEntityFilterSearchDataV2,
   IUserEntity,
   IVendorCreateDto,
-  IVendorEntity,
-  IVendorSearchDto,
+  IVendorUpdateDto,
+  VendorModel,
 } from 'service_reminder_common';
 import { AuthService } from '../../services/auth/authservice';
 import { VendorService } from '../../services/vendor/vendor.service';
@@ -26,12 +29,13 @@ export class Vendor {
   private router = inject(Router);
   private authService = inject(AuthService);
 
-  items = signal<IVendorEntity[]>([]);
+  items = signal<VendorModel[]>([]);
   error = signal('');
 
   isFormOpen = false;
   currentUser: IUserEntity = {} as IUserEntity;
-  editingItem: IVendorEntity | null = null;
+  editingItem: VendorModel | null = null;
+  filterDataHelper: EntityFilterDataHelper = {} as EntityFilterDataHelper;
 
   onClickOpenForm() {
     this.editingItem = null;
@@ -43,7 +47,7 @@ export class Vendor {
     this.editingItem = null;
   };
 
-  onClickEdit = (item: IVendorEntity) => {
+  onClickEdit = (item: VendorModel) => {
     this.editingItem = item;
     this.isFormOpen = true;
     this.error.set('');
@@ -69,43 +73,50 @@ export class Vendor {
   }
 
   loadItems() {
-    this.vendorService.search({} as IVendorSearchDto).subscribe({
-      next: (items) => {
-        this.items.set(items);
+    const recurringItemEntityConfig: IEntityFilterSearchDataV2<EntityList.RECURRING_ITEM> = {
+      name: EntityList.RECURRING_ITEM,
+    };
+
+    const filterData: IEntityFilterSearchDataV2<EntityList.VENDOR> = {
+      name: EntityList.VENDOR,
+      filter: {
+        entities: [recurringItemEntityConfig],
+      },
+    };
+
+    this.vendorService.baseSearch(filterData).subscribe({
+      next: (searchResponse) => {
+        const filterDataHelper = new EntityFilterDataHelper(searchResponse);
+        filterDataHelper.populateRelationsFor([EntityList.VENDOR, EntityList.RECURRING_ITEM]);
+
+        this.filterDataHelper = filterDataHelper;
+        this.items.set(filterDataHelper.entityModelsMap[EntityList.VENDOR]);
         this.error.set('');
       },
       error: (err) => {
-        console.log('error', err);
         if (err?.status === 401) {
           this.router.navigate(['/login']);
           return;
         }
-
         this.error.set(err.error?.message || 'Unable to load vendors.');
       },
     });
   }
 
-  onSubmit = (value: IVendorCreateDto) => {
-    this.error.set('');
-
-    const request$ = this.editingItem
-      ? this.vendorService.update(this.editingItem.id, value)
-      : this.vendorService.create({
-          ...value,
-          userId: this.currentUser.id,
-        });
-
-    this.isFormOpen = false;
-    this.editingItem = null;
+  private saveVendor(id: number | null, dto: IVendorCreateDto | IVendorUpdateDto) {
+    const request$ = id
+      ? this.vendorService.update(id, dto as IVendorUpdateDto)
+      : this.vendorService.create(dto as IVendorCreateDto);
 
     return request$.pipe(
       tap((savedItem) => {
+        const savedModel = this.filterDataHelper.mergeEntity(EntityList.VENDOR, savedItem);
+
         this.items.update((items) => {
-          const idx = items.findIndex((i) => i.id === savedItem.id);
-          return idx !== -1
-            ? items.map((i) => (i.id === savedItem.id ? savedItem : i)) // update existing
-            : [savedItem, ...items]; // prepend new
+          const exists = items.some((item) => item.id === savedModel.id);
+          return exists
+            ? items.map((item) => (item.id === savedModel.id ? savedModel : item))
+            : [...items, savedModel];
         });
       }),
       catchError((err) => {
@@ -113,5 +124,20 @@ export class Vendor {
         return throwError(() => err);
       }),
     );
+  }
+
+  // Called by the form — returns observable for the form to subscribe to
+  onSubmit = (value: IVendorCreateDto) => {
+    this.error.set('');
+
+    const dto = this.editingItem
+      ? ({ ...value } as IVendorUpdateDto)
+      : ({ ...value, userId: this.currentUser.id } as IVendorCreateDto);
+
+    this.isFormOpen = false;
+    const editingId = this.editingItem?.id ?? null;
+    this.editingItem = null;
+
+    return this.saveVendor(editingId, dto);
   };
 }
