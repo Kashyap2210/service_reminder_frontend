@@ -15,18 +15,18 @@
   </div>
 
   <div class="form-row">
-    <app-generic-input
-      label="Vendor ID"
-      controlName="vendorId"
-      type="number"
-      placeholder="Enter vendor id"
-    />
-    <app-generic-input
-      label="Recurring Item ID"
+    <app-generic-select
       controlName="recurringItemId"
-      type="number"
-      placeholder="Enter recurring item id"
+      label="Recurring Item"
+      [options]="recurringItemOptions"
     />
+
+    <app-generic-select
+      controlName="vendorId"
+      label="Vendor"
+      [options]="vendorOptionsFromRecurringItem"
+    />
+
     <app-generic-input
       label="Check Points"
       controlName="checkPoints"

@@ -12,9 +12,9 @@ import { AbstractControl, ControlContainer, FormGroup, ReactiveFormsModule } fro
 import { MatIcon } from '@angular/material/icon';
 import { VALIDATION_MESSAGES_TOKEN } from '../../validation/validation-messages.token';
 
-export interface SelectOption {
+export interface SelectOption<T = string> {
   label: string;
-  value: string;
+  value: T;
 }
 
 @Component({
@@ -29,7 +29,7 @@ export interface SelectOption {
     },
   ],
 })
-export class GenericSelectComponent implements OnInit {
+export class GenericSelectComponent<T = string> implements OnInit {
   private messages = inject(VALIDATION_MESSAGES_TOKEN);
   private controlContainer = inject(ControlContainer);
   private elementRef = inject(ElementRef);
@@ -37,15 +37,11 @@ export class GenericSelectComponent implements OnInit {
   label = input<string>('');
   controlName = input.required<string>();
   placeholder = input<string>('');
-  options = input.required<SelectOption[]>();
+  options = input.required<SelectOption<T>[]>();
 
   control!: AbstractControl;
   isOpen = signal(false);
   searchQuery = signal('');
-
-  ngOnInit() {
-    this.control = (this.controlContainer.control as FormGroup).get(this.controlName())!;
-  }
 
   filteredOptions = computed(() => {
     const query = this.searchQuery().toLowerCase();
@@ -53,6 +49,10 @@ export class GenericSelectComponent implements OnInit {
       ? this.options().filter((o) => o.label.toLowerCase().includes(query))
       : this.options();
   });
+
+  ngOnInit() {
+    this.control = (this.controlContainer.control as FormGroup).get(this.controlName())!;
+  }
 
   get selectedLabel(): string {
     const val = this.control?.value;
@@ -71,7 +71,7 @@ export class GenericSelectComponent implements OnInit {
     if (!this.isOpen()) this.searchQuery.set('');
   }
 
-  selectOption(option: SelectOption) {
+  selectOption(option: SelectOption<T>) {
     this.control.setValue(option.value);
     this.control.markAsTouched();
     this.isOpen.set(false);

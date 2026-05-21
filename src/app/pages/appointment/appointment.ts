@@ -73,12 +73,18 @@ export class Appointment {
       name: EntityList.VENDOR,
     };
 
+    const vendorRecurringItemRelationConfig: IEntityFilterSearchData<EntityList.VENDOR_RECURRING_ITEM_MAPPING> =
+      {
+        name: EntityList.VENDOR_RECURRING_ITEM_MAPPING,
+      };
+
     const userRelationConfig: IEntityFilterSearchData<EntityList.USER> = {
       name: EntityList.USER,
     };
 
     const recurringItemRelationConfig: IEntityFilterSearchData<EntityList.RECURRING_ITEM> = {
       name: EntityList.RECURRING_ITEM,
+      relations: [vendorRecurringItemRelationConfig],
     };
 
     const filter: IEntityFilterSearchDataV2<EntityList.APPOINTMENT> = {
@@ -87,16 +93,23 @@ export class Appointment {
         include: {
           userId: [this.currentUser.id],
         },
-        relations: [userRelationConfig, vendorRelationConfig, recurringItemRelationConfig],
+        relations: [userRelationConfig],
+        entities: [vendorRelationConfig, recurringItemRelationConfig],
       },
     };
 
     this.appointmentService.baseSearch(filter).subscribe({
       next: (searchResponse) => {
         const filterDataHelper = new EntityFilterDataHelper(searchResponse);
-        filterDataHelper.populateRelationsFor([EntityList.APPOINTMENT]);
+        filterDataHelper.populateRelationsFor([
+          EntityList.APPOINTMENT,
+          EntityList.VENDOR,
+          EntityList.RECURRING_ITEM,
+          EntityList.VENDOR_RECURRING_ITEM_MAPPING,
+        ]);
 
         this.filterDataHelper = filterDataHelper;
+        console.log('this.filterDataHelper', this.filterDataHelper);
 
         this.items.set(filterDataHelper.entityModelsMap[EntityList.APPOINTMENT]);
         this.error.set('');
@@ -119,15 +132,15 @@ export class Appointment {
 
     return request$.pipe(
       tap((savedItem) => {
-        const savedModel = this.filterDataHelper
-          ? this.filterDataHelper.mergeEntity(EntityList.APPOINTMENT, savedItem)
-          : AppointmentModel.populateFromEntity(savedItem);
+        // console.log('savedItem', savedItem);
+        const savedModel = this.filterDataHelper.mergeEntity(EntityList.APPOINTMENT, savedItem);
+        // console.log('savedModel', savedModel);
 
         this.items.update((items) => {
-          const idx = items.findIndex((i) => i.id === savedItem.id);
-          return idx !== -1
-            ? items.map((i) => (i.id === savedItem.id ? savedModel : i))
-            : [savedModel, ...items];
+          const exists = items.some((item) => item.id === savedModel.id);
+          return exists
+            ? items.map((item) => (item.id === savedModel.id ? savedModel : item)) // update
+            : [...items, savedModel]; // create
         });
       }),
       catchError((err) => {
@@ -169,7 +182,7 @@ export class Appointment {
     const config = appointmentFlowConfig[status];
 
     if (!config) return [];
-    console.log('Object.keys(config.actions)', Object.keys(config.actions));
+    // console.log('Object.keys(config.actions)', Object.keys(config.actions));
     return Object.keys(config.actions) as AppointmentAction[];
   }
 
@@ -203,7 +216,7 @@ export class Appointment {
 
   onClickEdit = (item: AppointmentModel) => {
     this.editingItem = item;
-    console.log('this.editingItem', this.editingItem);
+    // console.log('this.editingItem', this.editingItem);
     this.isFormOpen = true;
     this.error.set('');
   };
@@ -219,21 +232,6 @@ export class Appointment {
       },
     });
   };
-
-  // onClickActionUpdate = (item: AppointmentModel, action: AppointmentAction) => {
-  //   this.error.set('');
-  //   this.appointmentService.update(item.id, { action } as IAppointmentUpdateDto).subscribe({
-  //     next: (updated) => {
-  //       const updatedModel = this.filterDataHelper
-  //         ? this.filterDataHelper.mergeEntity(EntityList.APPOINTMENT, updated)
-  //         : AppointmentModel.populateFromEntity(updated);
-  //       this.items.update((items) => items.map((i) => (i.id === updated.id ? updatedModel : i)));
-  //     },
-  //     error: (err) => {
-  //       this.error.set(err.error?.message || 'Unable to perform action.');
-  //     },
-  //   });
-  // };
 
   getAppointmentDateFormatted(date: string | number) {
     return new DateCodeUtils(date).toLongDateString();

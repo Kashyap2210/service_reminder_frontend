@@ -16,7 +16,11 @@
   </div>
 
   @if (isFormOpen) {
-    <app-appointment-form [submitHandler]="onSubmit" [initialValue]="editingItem" />
+    <app-appointment-form
+      [submitHandler]="onSubmit"
+      [initialValue]="editingItem"
+      [entityFilterDataHelper]="filterDataHelper"
+    />
   }
   @if (error()) {
     <p class="error-message">{{ error() }}</p>
@@ -26,7 +30,7 @@
     <table class="items-table">
       <thead>
         <tr>
-          <th>ID</th>
+          <!-- <th>ID</th> -->
           <th>Date</th>
           <th>Type</th>
           <th>Status</th>
@@ -39,7 +43,7 @@
       <tbody>
         @for (item of items(); track item.id) {
           <tr>
-            <td>{{ item.id }}</td>
+            <!-- <td>{{ item.id }}</td> -->
             <td>{{ getAppointmentDateFormatted(item.appointmentDate) }}</td>
             <td>{{ item.appointmentType }}</td>
             <td>{{ item.appointmentStatus }}</td>
