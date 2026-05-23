@@ -102,7 +102,7 @@ export class ServiceFormComponent {
       serviceDate: serviceDateNum,
     };
 
-    console.log('value', value);
+    // console.log('value', value);
 
     return this.submitHandler()(value);
   };

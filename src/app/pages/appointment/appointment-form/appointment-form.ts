@@ -44,7 +44,7 @@ export class AppointmentFormComponent implements OnInit {
     const recurringItem = this.entityFilterDataHelper().entityModelsMap[
       EntityList.RECURRING_ITEM
     ].find((item) => item.id === recurringItemId);
-    console.log('recurringItem', recurringItem);
+    // console.log('recurringItem', recurringItem);
 
     return (
       recurringItem?.vendors
@@ -90,7 +90,7 @@ export class AppointmentFormComponent implements OnInit {
     this.vendorOptions = vendors.map((v) => ({ label: v.name, value: v.id }));
     this.recurringItemOptions = items.map((i) => ({ label: i.name, value: i.id }));
 
-    console.log(this.entityFilterDataHelper());
+    // console.log(this.entityFilterDataHelper());
 
     const val = this.initialValue();
     if (val) {

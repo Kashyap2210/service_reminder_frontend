@@ -48,7 +48,7 @@ export class VendorFormComponent implements OnInit {
       // Get preselected recurring item IDs using the vendorModel's relation mapping
       const vendorModel = val;
 
-      console.log('vendorModel', vendorModel);
+      // console.log('vendorModel', vendorModel);
 
       const preselectedIds = definedValues(
         (vendorModel[EntityList.VENDOR_RECURRING_ITEM_MAPPING] || []).map(

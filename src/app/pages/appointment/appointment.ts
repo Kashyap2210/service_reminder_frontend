@@ -109,7 +109,7 @@ export class Appointment {
         ]);
 
         this.filterDataHelper = filterDataHelper;
-        console.log('this.filterDataHelper', this.filterDataHelper);
+        // console.log('this.filterDataHelper', this.filterDataHelper);
 
         this.items.set(filterDataHelper.entityModelsMap[EntityList.APPOINTMENT]);
         this.error.set('');
