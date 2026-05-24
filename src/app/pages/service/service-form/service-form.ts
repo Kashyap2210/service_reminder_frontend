@@ -39,7 +39,6 @@ export class ServiceFormComponent implements OnInit {
   recurringItemOptions: SelectOption<number>[] = [];
 
   ngOnInit() {
-    console.log('this.entityFilterDataHelper()', this.entityFilterDataHelper());
     const items = this.entityFilterDataHelper().getEntityFromList(EntityList.RECURRING_ITEM);
     const vendors = this.entityFilterDataHelper().getEntityFromList(EntityList.VENDOR);
 
