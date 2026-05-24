@@ -14,23 +14,17 @@
     />
   </div>
   <div class="form-row">
-    <app-generic-input
-      label="Recurring Item ID"
+    <app-generic-select
+      label="Recurring Item"
       controlName="recurringItemId"
-      type="number"
-      placeholder="Enter recurring item ID"
+      placeholder="Select recurring item"
+      [options]="recurringItemOptions"
     />
-    <app-generic-input
-      label="Vendor ID"
+    <app-generic-select
+      label="Vendor"
       controlName="vendorId"
-      type="number"
-      placeholder="Enter vendor ID"
-    />
-    <app-generic-input
-      label="Appointment ID"
-      controlName="appointmentId"
-      type="number"
-      placeholder="Enter appointment ID (optional)"
+      placeholder="Select vendor"
+      [options]="vendorOptionsFromRecurringItem"
     />
   </div>
   <div class="form-row">

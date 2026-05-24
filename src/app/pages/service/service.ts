@@ -9,11 +9,14 @@ import {
   IEntityFilterSearchData,
   IEntityFilterSearchDataV2,
   IServiceCreateDto,
+  IServiceUpdateDto,
   IUserEntity,
   Nullable,
-  ServiceAction,
   ServiceModel,
+  ServiceAction as _ServiceAction,
+  serviceFlowConfig,
 } from 'service_reminder_common';
+import { DropdownMenuComponent, DropdownMenuItem } from '../../components/dropdown/dropdown';
 import { AuthService } from '../../services/auth/authservice';
 import { ServiceApiService } from '../../services/service/service.service';
 import { CancelButtonComponent } from '../../shared/buttons/cancel-button/cancel-button';
@@ -23,7 +26,13 @@ import { ServiceFormComponent } from './service-form/service-form';
 @Component({
   selector: 'app-service',
   standalone: true,
-  imports: [ServiceFormComponent, GenericButtonComponent, CancelButtonComponent, CurrencyPipe],
+  imports: [
+    ServiceFormComponent,
+    GenericButtonComponent,
+    CancelButtonComponent,
+    DropdownMenuComponent,
+    CurrencyPipe,
+  ],
   templateUrl: './service.html',
   styleUrls: ['./service.css'],
 })
@@ -36,6 +45,8 @@ export class Service {
   error = signal('');
 
   isFormOpen = false;
+  readonly ServiceAction = _ServiceAction;
+
   currentUser: IUserEntity = {} as IUserEntity;
   editingItem: ServiceModel | null = null;
   filterDataHelper: EntityFilterDataHelper = {} as EntityFilterDataHelper;
@@ -54,6 +65,85 @@ export class Service {
     this.editingItem = item;
     this.isFormOpen = true;
     this.error.set('');
+  };
+
+  private saveService(id: number | null, dto: IServiceCreateDto | IServiceUpdateDto) {
+    const request$ = id
+      ? this.serviceService.update(id, dto as IServiceUpdateDto)
+      : this.serviceService.create(dto as IServiceCreateDto);
+
+    return request$.pipe(
+      tap((savedItem) => {
+        const savedModel = this.filterDataHelper
+          ? this.filterDataHelper.mergeEntity(EntityList.SERVICE, savedItem)
+          : ServiceModel.populateFromEntity(savedItem);
+
+        this.items.update((items) => {
+          const idx = items.findIndex((i) => i.id === savedItem.id);
+          return idx !== -1
+            ? items.map((i) => (i.id === savedItem.id ? savedModel : i))
+            : [savedModel, ...items];
+        });
+      }),
+      catchError((err) => {
+        this.error.set(err.error?.message || 'Unable to save service.');
+        return throwError(() => err);
+      }),
+    );
+  }
+
+  // Called by the form — returns observable for the form to subscribe to
+  onSubmit = (value: IServiceCreateDto) => {
+    this.error.set('');
+    const editingId = this.editingItem?.id ?? null;
+
+    const dto = this.editingItem
+      ? ({ ...value, action: _ServiceAction.EDIT } as IServiceUpdateDto)
+      : ({ ...value, userId: this.currentUser.id } as IServiceCreateDto);
+
+    this.isFormOpen = false;
+    this.editingItem = null;
+
+    return this.saveService(editingId, dto);
+  };
+
+  // Called by action menu — subscribes itself, no form involved
+  onClickActionUpdate = (item: ServiceModel, action: _ServiceAction) => {
+    this.error.set('');
+    this.saveService(item.id, { action } as IServiceUpdateDto).subscribe();
+  };
+
+  getAvailableActions(item: ServiceModel): _ServiceAction[] {
+    const config = serviceFlowConfig[item.serviceStatus];
+
+    if (!config) return [];
+    return Object.keys(config.actions) as _ServiceAction[];
+  }
+
+  private actionHandlers: Partial<Record<_ServiceAction, (item: ServiceModel) => void>> = {
+    [_ServiceAction.EDIT]: (item) => this.onClickEdit(item),
+    [_ServiceAction.START]: (item) => this.onClickActionUpdate(item, _ServiceAction.START),
+    [_ServiceAction.COMPLETE]: (item) => this.onClickActionUpdate(item, _ServiceAction.COMPLETE),
+    [_ServiceAction.CANCEL]: (item) => this.onClickActionUpdate(item, _ServiceAction.CANCEL),
+    [_ServiceAction.FAIL]: (item) => this.onClickActionUpdate(item, _ServiceAction.FAIL),
+  };
+
+  getActionMenuItems(item: ServiceModel): DropdownMenuItem[] {
+    return this.getAvailableActions(item).map((act) => ({
+      label: act.replace(/_/g, ' '),
+      value: act,
+      danger: act === _ServiceAction.CANCEL || act === _ServiceAction.FAIL,
+    }));
+  }
+
+  onActionMenuSelect = (service: ServiceModel, menuItem: DropdownMenuItem) => {
+    const action = menuItem.value as _ServiceAction;
+    const handler = this.actionHandlers[action];
+    if (handler) {
+      handler(service);
+    } else {
+      console.warn(`No handler registered for action: ${action}`);
+    }
   };
 
   onClickDelete = (id: number) => {
@@ -79,8 +169,16 @@ export class Service {
     const vendorRelationConfig: IEntityFilterSearchData<EntityList.VENDOR> = {
       name: EntityList.VENDOR,
     };
-    const recurringItemRelationConfig: IEntityFilterSearchData<EntityList.RECURRING_ITEM> = {
+
+    const vendorRecurringItemMappingRelationConfig: IEntityFilterSearchData<EntityList.VENDOR_RECURRING_ITEM_MAPPING> =
+      {
+        name: EntityList.VENDOR_RECURRING_ITEM_MAPPING,
+        relations: [vendorRelationConfig],
+      };
+
+    const recurringItemEntityConfig: IEntityFilterSearchData<EntityList.RECURRING_ITEM> = {
       name: EntityList.RECURRING_ITEM,
+      relations: [vendorRecurringItemMappingRelationConfig],
     };
 
     const userRelationConfig: IEntityFilterSearchData<EntityList.USER> = {
@@ -93,7 +191,8 @@ export class Service {
         include: {
           userId: [this.currentUser.id],
         },
-        relations: [userRelationConfig, vendorRelationConfig, recurringItemRelationConfig],
+        relations: [userRelationConfig],
+        entities: [recurringItemEntityConfig],
       },
     };
 
@@ -103,10 +202,13 @@ export class Service {
         filterDataHelper.populateRelationsFor([
           EntityList.SERVICE,
           EntityList.USER,
-          EntityList.APPOINTMENT,
+          EntityList.VENDOR_RECURRING_ITEM_MAPPING,
+          EntityList.VENDOR,
+          EntityList.RECURRING_ITEM,
         ]);
 
         this.filterDataHelper = filterDataHelper;
+        console.log('this.filterDataHelper', this.filterDataHelper);
 
         this.items.set(filterDataHelper.entityModelsMap[EntityList.SERVICE]);
         this.error.set('');
@@ -122,39 +224,6 @@ export class Service {
       },
     });
   }
-
-  onSubmit = (value: IServiceCreateDto) => {
-    this.error.set('');
-
-    const request$ = this.editingItem
-      ? this.serviceService.update(this.editingItem.id, { ...value, action: ServiceAction.EDIT })
-      : this.serviceService.create({
-          ...value,
-          userId: this.currentUser.id,
-        });
-
-    this.isFormOpen = false;
-    this.editingItem = null;
-
-    return request$.pipe(
-      tap((savedItem) => {
-        const savedModel = this.filterDataHelper
-          ? this.filterDataHelper.mergeEntity(EntityList.SERVICE, savedItem)
-          : ServiceModel.populateFromEntity(savedItem);
-
-        this.items.update((items) => {
-          const idx = items.findIndex((i) => i.id === savedItem.id);
-          return idx !== -1
-            ? items.map((i) => (i.id === savedItem.id ? savedModel : i))
-            : [savedModel, ...items];
-        });
-      }),
-      catchError((err) => {
-        this.error.set(err.error?.message || 'Unable to save service.');
-        return throwError(() => err);
-      }),
-    );
-  };
 
   getFormatted(date: Nullable<number>) {
     if (!date) return null;

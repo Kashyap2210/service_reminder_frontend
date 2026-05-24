@@ -1,9 +1,18 @@
-import { Component, input } from '@angular/core';
+import { Component, input, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { AppointmentType, IServiceCreateDto, IServiceEntity } from 'service_reminder_common';
+import {
+  AppointmentType,
+  EntityFilterDataHelper,
+  EntityList,
+  IServiceCreateDto,
+  IServiceEntity,
+} from 'service_reminder_common';
 import { GenericButtonComponent } from '../../../shared/generic-button/generic-button';
-import { GenericSelectComponent } from '../../../shared/generic-dropdown/generic-dropdown';
+import {
+  GenericSelectComponent,
+  SelectOption,
+} from '../../../shared/generic-dropdown/generic-dropdown';
 import { GenericInputComponent } from '../../../shared/generic-input/generic-input';
 
 type ServiceFormValue = IServiceCreateDto;
@@ -20,14 +29,24 @@ type ServiceFormValue = IServiceCreateDto;
   templateUrl: './service-form.html',
   styleUrls: ['./service-form.css'],
 })
-export class ServiceFormComponent {
+export class ServiceFormComponent implements OnInit {
+  entityFilterDataHelper = input.required<EntityFilterDataHelper>();
   submitHandler = input.required<(value: ServiceFormValue) => Observable<any>>();
   initialValue = input<IServiceEntity | null>(null);
 
+  vendorOptions: SelectOption<number>[] = [];
+  recurringItemOptions: SelectOption<number>[] = [];
+
   ngOnInit() {
+    console.log('this.entityFilterDataHelper()', this.entityFilterDataHelper());
+    const items = this.entityFilterDataHelper().getEntityFromList(EntityList.RECURRING_ITEM);
+    const vendors = this.entityFilterDataHelper().getEntityFromList(EntityList.VENDOR);
+
+    this.vendorOptions = vendors.map((v) => ({ label: v.name, value: v.id }));
+    this.recurringItemOptions = items.map((i) => ({ label: i.name, value: i.id }));
+
     const val = this.initialValue();
     if (val) {
-      // Convert YYYYMMDD number to YYYY-MM-DD string for date input
       const serviceDateStr = val.serviceDate
         ? `${String(val.serviceDate).substring(0, 4)}-${String(val.serviceDate).substring(4, 6)}-${String(val.serviceDate).substring(6, 8)}`
         : '';
@@ -35,8 +54,6 @@ export class ServiceFormComponent {
       this.form.patchValue({
         serviceDate: serviceDateStr,
         recurringItemId: val.recurringItemId,
-        appointmentId: val.appointmentId ?? null,
-        userId: val.userId,
         serviceType: val.serviceType ?? '',
         vendorId: val.vendorId,
         serviceEstimate: val.serviceEstimate ?? null,
@@ -44,6 +61,23 @@ export class ServiceFormComponent {
         invoiceDocument: val.invoiceDocument ?? null,
       });
     }
+  }
+
+  get vendorOptionsFromRecurringItem() {
+    const recurringItemId = this.form.get('recurringItemId')?.value;
+    const recurringItem = this.entityFilterDataHelper().entityModelsMap[
+      EntityList.RECURRING_ITEM
+    ].find((item) => item.id === recurringItemId);
+    // console.log('recurringItem', recurringItem);
+
+    return (
+      recurringItem?.vendors
+        ?.filter((v) => v !== undefined) // guard against sparse array
+        .map((v) => ({
+          label: v.name,
+          value: v.id,
+        })) ?? []
+    );
   }
 
   form = new FormGroup({
@@ -55,13 +89,6 @@ export class ServiceFormComponent {
       nonNullable: true,
       validators: [Validators.required],
     }),
-    appointmentId: new FormControl<number | null>(null, {
-      nonNullable: false,
-    }),
-    userId: new FormControl(0, {
-      nonNullable: true,
-      validators: [Validators.required],
-    }),
     serviceType: new FormControl('', {
       nonNullable: true,
       validators: [Validators.required],
@@ -70,10 +97,10 @@ export class ServiceFormComponent {
       nonNullable: true,
       validators: [Validators.required],
     }),
-    serviceEstimate: new FormControl<number | null>(0, {
+    serviceEstimate: new FormControl<number | null>(null, {
       nonNullable: false,
     }),
-    serviceAmount: new FormControl<number | null>(0, {
+    serviceAmount: new FormControl<number | null>(null, {
       nonNullable: false,
     }),
     invoiceDocument: new FormControl<string | null>(null, {
@@ -92,7 +119,6 @@ export class ServiceFormComponent {
 
     const rawValue = this.form.getRawValue() as any;
 
-    // Convert YYYY-MM-DD string to YYYYMMDD number
     const serviceDateNum = rawValue.serviceDate
       ? Number(rawValue.serviceDate.replace(/-/g, ''))
       : 0;
@@ -100,9 +126,9 @@ export class ServiceFormComponent {
     const value: ServiceFormValue = {
       ...rawValue,
       serviceDate: serviceDateNum,
+      serviceEstimate: rawValue.serviceEstimate != null ? Number(rawValue.serviceEstimate) : null,
+      serviceAmount: rawValue.serviceAmount != null ? Number(rawValue.serviceAmount) : null,
     };
-
-    // console.log('value', value);
 
     return this.submitHandler()(value);
   };
