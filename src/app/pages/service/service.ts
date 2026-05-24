@@ -3,6 +3,7 @@ import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, tap, throwError } from 'rxjs';
 import {
+  AppointmentStatus,
   DateCodeUtils,
   EntityFilterDataHelper,
   EntityList,
@@ -176,9 +177,16 @@ export class Service {
         relations: [vendorRelationConfig],
       };
 
+    const appointmentRelationConfig: IEntityFilterSearchData<EntityList.APPOINTMENT> = {
+      name: EntityList.APPOINTMENT,
+      include: {
+        appointmentStatus: [AppointmentStatus.BOOKED, AppointmentStatus.RE_SCHEDULED],
+      },
+    };
+
     const recurringItemEntityConfig: IEntityFilterSearchData<EntityList.RECURRING_ITEM> = {
       name: EntityList.RECURRING_ITEM,
-      relations: [vendorRecurringItemMappingRelationConfig],
+      relations: [vendorRecurringItemMappingRelationConfig, appointmentRelationConfig],
     };
 
     const userRelationConfig: IEntityFilterSearchData<EntityList.USER> = {
@@ -205,6 +213,7 @@ export class Service {
           EntityList.VENDOR_RECURRING_ITEM_MAPPING,
           EntityList.VENDOR,
           EntityList.RECURRING_ITEM,
+          EntityList.APPOINTMENT,
         ]);
 
         this.filterDataHelper = filterDataHelper;

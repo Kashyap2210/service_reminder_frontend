@@ -3,6 +3,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Observable } from 'rxjs';
 import {
   AppointmentType,
+  DateCodeUtils,
   EntityFilterDataHelper,
   EntityList,
   IServiceCreateDto,
@@ -56,6 +57,7 @@ export class ServiceFormComponent implements OnInit {
         recurringItemId: val.recurringItemId,
         serviceType: val.serviceType ?? '',
         vendorId: val.vendorId,
+        appointmentId: val.appointmentId ?? null,
         serviceEstimate: val.serviceEstimate ?? null,
         serviceAmount: val.serviceAmount ?? null,
         invoiceDocument: val.invoiceDocument ?? null,
@@ -68,14 +70,32 @@ export class ServiceFormComponent implements OnInit {
     const recurringItem = this.entityFilterDataHelper().entityModelsMap[
       EntityList.RECURRING_ITEM
     ].find((item) => item.id === recurringItemId);
-    // console.log('recurringItem', recurringItem);
 
     return (
       recurringItem?.vendors
-        ?.filter((v) => v !== undefined) // guard against sparse array
+        ?.filter((v) => v !== undefined)
         .map((v) => ({
           label: v.name,
           value: v.id,
+        })) ?? []
+    );
+  }
+
+  get appointmentOptionsFromRecurringItem() {
+    const recurringItemId = this.form.get('recurringItemId')?.value;
+    const serviceType = this.form.get('serviceType')?.value;
+    const recurringItem = this.entityFilterDataHelper().entityModelsMap[
+      EntityList.RECURRING_ITEM
+    ].find((item) => item.id === recurringItemId);
+
+    if (!recurringItem || !serviceType) return [];
+
+    return (
+      recurringItem.appointment
+        ?.filter((a) => a.appointmentType === serviceType)
+        .map((a) => ({
+          label: `${a.id} - ${new DateCodeUtils(a.appointmentDate).toLongDateString()}`,
+          value: a.id,
         })) ?? []
     );
   }
@@ -96,6 +116,9 @@ export class ServiceFormComponent implements OnInit {
     vendorId: new FormControl(0, {
       nonNullable: true,
       validators: [Validators.required],
+    }),
+    appointmentId: new FormControl<number | null>(null, {
+      nonNullable: false,
     }),
     serviceEstimate: new FormControl<number | null>(null, {
       nonNullable: false,
