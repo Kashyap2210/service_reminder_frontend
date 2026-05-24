@@ -61,6 +61,8 @@
                     [items]="getActionMenuItems(item)"
                     (itemSelected)="onActionMenuSelect(item, $event)"
                   />
+                } @else {
+                  <div class="text-center w-full">-</div>
                 }
               </div>
             </td>
