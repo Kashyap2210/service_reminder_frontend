@@ -16,7 +16,11 @@
   </div>
 
   @if (isFormOpen) {
-    <app-service-form [submitHandler]="onSubmit" [initialValue]="editingItem" />
+    <app-service-form
+      [submitHandler]="onSubmit"
+      [initialValue]="editingItem"
+      [entityFilterDataHelper]="filterDataHelper"
+    />
   }
   @if (error()) {
     <p class="error-message">{{ error() }}</p>
@@ -28,6 +32,7 @@
         <tr>
           <th>Service Date</th>
           <th>Service Type</th>
+          <th>Status</th>
           <th>Recurring Item</th>
           <th>Vendor</th>
           <th>Service Estimate</th>
@@ -41,18 +46,24 @@
           <tr>
             <td>{{ getFormatted(item.serviceDate) }}</td>
             <td>{{ item.serviceType }}</td>
+            <td>{{ item.serviceStatus }}</td>
             <td>{{ item.recurringItemName }}</td>
             <td>{{ item.vendorName }}</td>
             <td>{{ item.serviceEstimate | currency: 'INR' }}</td>
             <td>{{ item.serviceAmount | currency: 'INR' }}</td>
             <td>{{ item.invoiceDocument || '-' }}</td>
-            <td class="actions-cell">
-              <button class="action-btn edit-btn" (click)="onClickEdit(item)" title="Edit">
-                ✏️
-              </button>
-              <button class="action-btn delete-btn" (click)="onClickDelete(item.id)" title="Delete">
-                🗑️
-              </button>
+            <td>
+              <div class="actions-cell">
+                @if (getActionMenuItems(item).length) {
+                  <app-dropdown-menu
+                    triggerLabel="Take action"
+                    [items]="getActionMenuItems(item)"
+                    (itemSelected)="onActionMenuSelect(item, $event)"
+                  />
+                } @else {
+                  <div class="text-center w-full">-</div>
+                }
+              </div>
             </td>
           </tr>
         }
