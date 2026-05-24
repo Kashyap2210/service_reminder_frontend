@@ -16,7 +16,7 @@
   </div>
 
   @if (isFormOpen) {
-    <app-vendor-form [submitHandler]="onSubmit" [initialValue]="editingItem" />
+    <app-vendor-form [submitHandler]="onSubmit" [initialValue]="editingItem" [entityFilterDataHelper]="filterDataHelper" />
   }
   @if (error()) {
     <p class="error-message">{{ error() }}</p>

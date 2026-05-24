@@ -1,0 +1,57 @@
+<div class="field" [class.has-error]="!!errorMessage">
+  <label>{{ label() }}</label>
+
+  <div class="select-wrapper" [class.open]="isOpen()">
+    <button type="button" class="select-trigger" (click)="toggleDropdown()">
+      <span class="selected-display">
+        @if (selectedCount > 0) {
+          <span class="selected-label">{{ selectedLabels.join(', ') }}</span>
+        } @else {
+          <span class="placeholder">{{ placeholder() }}</span>
+        }
+      </span>
+      <div class="trigger-icons">
+        @if (selectedCount > 0) {
+          <span class="selected-badge">{{ selectedCount }}</span>
+        }
+        <mat-icon class="chevron">expand_more</mat-icon>
+      </div>
+    </button>
+
+    @if (isOpen()) {
+      <div class="dropdown-panel">
+        <div class="search-wrapper">
+          <input
+            class="search-input"
+            type="text"
+            placeholder="Search..."
+            [value]="searchQuery()"
+            (input)="onSearch($event)"
+            (click)="$event.stopPropagation()"
+          />
+        </div>
+
+        <ul class="options-list">
+          @for (option of filteredOptions(); track option.value) {
+            <li class="option" (click)="toggleOption(option)">
+              <input
+                type="checkbox"
+                class="option-checkbox"
+                [checked]="isOptionSelected(option)"
+                (click)="$event.stopPropagation()"
+                readonly
+              />
+              <span class="option-label">{{ option.label }}</span>
+            </li>
+          } @empty {
+            <li class="option no-results">No results found</li>
+          }
+        </ul>
+      </div>
+    }
+  </div>
+
+  @if (errorMessage) {
+    <span class="error-hint">{{ errorMessage }}</span>
+  }
+</div>

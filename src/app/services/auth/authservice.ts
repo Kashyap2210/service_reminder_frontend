@@ -20,13 +20,13 @@ export class AuthService {
   }
 
   signup(payload: IUserCreateDto) {
-    console.log(`${this.baseUrl}/user`);
+    // console.log(`${this.baseUrl}/user`);
     return this.http.post(`${this.baseUrl}/user`, payload);
   }
 
   setSession(user?: IUserEntity, token?: string) {
-    console.log(user);
-    console.log(token);
+    // console.log(user);
+    // console.log(token);
     if (user) {
       this.currentUser.set(user);
       localStorage.setItem('user', JSON.stringify(user));

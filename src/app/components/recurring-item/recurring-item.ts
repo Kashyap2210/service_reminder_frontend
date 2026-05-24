@@ -144,7 +144,7 @@ export class RecurringItem {
   };
 
   readableDateFromEpoch(epochDate: number) {
-    console.log(DateUtil.toReadable(epochDate));
+    // console.log(DateUtil.toReadable(epochDate));
     return DateUtil.toReadable(epochDate);
   }
 }

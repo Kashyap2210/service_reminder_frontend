@@ -16,7 +16,11 @@
   </div>
 
   @if (isFormOpen) {
-    <app-appointment-form [submitHandler]="onSubmit" [initialValue]="editingItem" />
+    <app-appointment-form
+      [submitHandler]="onSubmit"
+      [initialValue]="editingItem"
+      [entityFilterDataHelper]="filterDataHelper"
+    />
   }
   @if (error()) {
     <p class="error-message">{{ error() }}</p>
@@ -26,6 +30,7 @@
     <table class="items-table">
       <thead>
         <tr>
+          <!-- <th>ID</th> -->
           <th>Date</th>
           <th>Type</th>
           <th>Status</th>
@@ -38,19 +43,28 @@
       <tbody>
         @for (item of items(); track item.id) {
           <tr>
+            <!-- <td>{{ item.id }}</td> -->
             <td>{{ getAppointmentDateFormatted(item.appointmentDate) }}</td>
             <td>{{ item.appointmentType }}</td>
             <td>{{ item.appointmentStatus }}</td>
             <td>{{ item.vendorName }}</td>
             <td>{{ item.recurringItemName }}</td>
             <td>{{ +item.createdOn | date: 'dd MMM yyyy, HH:mm' }}</td>
-            <td class="actions-cell">
-              <button class="action-btn edit-btn" (click)="onClickEdit(item)" title="Edit">
-                ✏️
-              </button>
-              <button class="action-btn delete-btn" (click)="onClickDelete(item.id)" title="Delete">
-                🗑️
-              </button>
+            <td>
+              <div class="actions-cell">
+                <!-- <button class="action-btn edit-btn" (click)="onClickEdit(item)" title="Edit">
+                  ✏️
+                </button> -->
+                @if (getActionMenuItems(item).length) {
+                  <app-dropdown-menu
+                    triggerLabel="Take action"
+                    [items]="getActionMenuItems(item)"
+                    (itemSelected)="onActionMenuSelect(item, $event)"
+                  />
+                } @else {
+                  <div class="text-center w-full">-</div>
+                }
+              </div>
             </td>
           </tr>
         }

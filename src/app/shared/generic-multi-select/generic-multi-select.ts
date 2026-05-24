@@ -18,10 +18,11 @@ export interface SelectOption<T = string> {
 }
 
 @Component({
-  selector: 'app-generic-select',
+  selector: 'app-generic-multi-select',
+  standalone: true,
   imports: [ReactiveFormsModule, MatIcon],
-  templateUrl: './generic-dropdown.html',
-  styleUrl: './generic-dropdown.scss',
+  templateUrl: './generic-multi-select.html',
+  styleUrl: './generic-multi-select.scss',
   viewProviders: [
     {
       provide: ControlContainer,
@@ -29,7 +30,7 @@ export interface SelectOption<T = string> {
     },
   ],
 })
-export class GenericSelectComponent<T = string> implements OnInit {
+export class GenericMultiSelectComponent<T = string> implements OnInit {
   private messages = inject(VALIDATION_MESSAGES_TOKEN);
   private controlContainer = inject(ControlContainer);
   private elementRef = inject(ElementRef);
@@ -54,9 +55,17 @@ export class GenericSelectComponent<T = string> implements OnInit {
     this.control = (this.controlContainer.control as FormGroup).get(this.controlName())!;
   }
 
-  get selectedLabel(): string {
-    const val = this.control?.value;
-    return this.options().find((o) => o.value === val)?.label ?? '';
+  get selectedLabels(): string[] {
+    const values = this.control?.value as T[];
+    if (!values || !Array.isArray(values)) return [];
+    return values
+      .map((v) => this.options().find((o) => o.value === v)?.label)
+      .filter((label) => label !== undefined) as string[];
+  }
+
+  get selectedCount(): number {
+    const values = this.control?.value as T[];
+    return Array.isArray(values) ? values.length : 0;
   }
 
   get errorMessage(): string | null {
@@ -71,11 +80,22 @@ export class GenericSelectComponent<T = string> implements OnInit {
     if (!this.isOpen()) this.searchQuery.set('');
   }
 
-  selectOption(option: SelectOption<T>) {
-    this.control.setValue(option.value);
+  isOptionSelected(option: SelectOption<T>): boolean {
+    const values = this.control?.value as T[];
+    if (!values || !Array.isArray(values)) return false;
+    return values.includes(option.value);
+  }
+
+  toggleOption(option: SelectOption<T>) {
+    const currentValues = (this.control?.value as T[]) || [];
+    const isSelected = currentValues.includes(option.value);
+
+    const newValues = isSelected
+      ? currentValues.filter((v) => v !== option.value)
+      : [...currentValues, option.value];
+
+    this.control.setValue(newValues);
     this.control.markAsTouched();
-    this.isOpen.set(false);
-    this.searchQuery.set('');
   }
 
   onSearch(event: Event) {

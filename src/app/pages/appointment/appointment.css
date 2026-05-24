@@ -82,3 +82,9 @@ app-appointment-form {
 .action-btn:hover {
   background: rgba(0, 0, 0, 0.08);
 }
+
+.actions-cell {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}

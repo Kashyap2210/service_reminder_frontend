@@ -1,5 +1,4 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import {
   EntityList,
@@ -8,10 +7,16 @@ import {
   IVendorSearchDto,
   IVendorUpdateDto,
 } from 'service_reminder_common';
+import { BaseService } from '../../shared/shared.service';
 
 @Injectable({ providedIn: 'root' })
-export class VendorService {
-  private http = inject(HttpClient);
+export class VendorService extends BaseService {
+  // private http = inject(HttpClient);
+
+  constructor() {
+    super(EntityList.VENDOR);
+  }
+
   private baseUrl = `http://localhost:3000/api/v1/${EntityList.VENDOR}`;
 
   search(dto: IVendorSearchDto): Observable<IVendorEntity[]> {
