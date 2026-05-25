@@ -88,7 +88,9 @@ export class Vendor {
 
     const filterData: IEntityFilterSearchDataV2<EntityList.VENDOR> = {
       name: EntityList.VENDOR,
+
       filter: {
+        include: { userId: [this.currentUser.id] },
         relations: [vendorRecurringItemEntityConfig],
         entities: [recurringItemEntityConfig],
       },
