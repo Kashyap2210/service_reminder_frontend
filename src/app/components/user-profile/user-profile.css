@@ -21,6 +21,14 @@
   word-break: break-all;
 }
 
+.text-danger {
+  color: #f87171 !important;
+}
+
+.keep-account {
+  margin-bottom: 18px;
+}
+
 .profile-actions {
   display: flex;
   gap: 4px;

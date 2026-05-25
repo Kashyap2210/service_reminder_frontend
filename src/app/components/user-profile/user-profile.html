@@ -22,9 +22,24 @@
       <div class="value">{{ user()?.role }}</div>
     </div>
 
+    <div class="field">
+      <label>Status</label>
+      <div class="value" [class.text-danger]="user()?.status === UserStatus.DELETED">
+        {{ user()?.status }}
+      </div>
+    </div>
+
     <div class="profile-actions">
       <app-generic-button [handler]="logout" btnClass="button-logout">Logout</app-generic-button>
-      <app-delete-button [handler]="deleteAccount" />
+      @if (user()?.status === UserStatus.DELETED) {
+        <div class="keep-account">
+          <app-generic-button [handler]="keepMyAccount" btnClass="submit-button"
+            >Keep My Account</app-generic-button
+          >
+        </div>
+      } @else {
+        <app-delete-button [handler]="deleteAccount" />
+      }
     </div>
 
     <app-generic-modal

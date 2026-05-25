@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, signal, viewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs';
+import { UserStatus } from 'service_reminder_common';
 import { AuthService } from '../../services/auth/authservice';
 import { UserService } from '../../services/user/user.service';
 import { DeleteButtonComponent } from '../../shared/buttons/delete-button/delete-button';
@@ -19,6 +20,7 @@ export class UserProfile implements OnInit {
   private userService = inject(UserService);
   private router = inject(Router);
 
+  UserStatus = UserStatus;
   user = signal<any>(null);
   modal = viewChild(GenericModalComponent);
 
@@ -38,6 +40,17 @@ export class UserProfile implements OnInit {
 
   deleteAccount = () => {
     this.modal()?.open();
+  };
+
+  keepMyAccount = () => {
+    const currentUser = this.user();
+    if (!currentUser?.id) return;
+    return this.userService.update(currentUser.id, { status: UserStatus.ACTIVE }).pipe(
+      tap((updatedUser) => {
+        this.user.set(updatedUser);
+        this.authService.setSession(updatedUser);
+      }),
+    );
   };
 
   handleConfirmDelete = () => {
