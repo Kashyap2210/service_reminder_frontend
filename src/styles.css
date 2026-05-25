@@ -138,6 +138,37 @@ body {
   }
 }
 
+.button-danger,
+.button-logout {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: none;
+  background: #f87171;
+  color: #ffffff;
+  font-size: 1rem;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 4px;
+  transition:
+    background 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.button-danger:hover {
+  background: #ef4444 !important;
+  color: #ffffff !important;
+}
+
+@media (max-width: 480px) {
+  .button-danger,
+  .button-logout {
+    padding: 14px;
+    font-size: 1rem;
+  }
+}
+
 @layer components {
   .flex-between-center {
     @apply w-full flex justify-between items-center;

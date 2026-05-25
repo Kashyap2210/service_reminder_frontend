@@ -1,0 +1,13 @@
+@if (isOpen()) {
+  <div class="modal-overlay" (click)="close()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <p class="modal-message">{{ message }}</p>
+      <div class="modal-actions">
+        <app-generic-button [handler]="close" btnClass="button-outline">Cancel</app-generic-button>
+        <app-generic-button [handler]="confirmHandler" btnClass="button-danger">{{
+          confirmText
+        }}</app-generic-button>
+      </div>
+    </div>
+  </div>
+}

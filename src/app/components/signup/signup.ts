@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { catchError, tap, throwError } from 'rxjs';
-import { IUserCreateDto, UserRole } from 'service_reminder_common';
+import { IUserCreateDto } from 'service_reminder_common';
 import { AuthService } from '../../services/auth/authservice';
 import { SignupFormComponent, SignupFormValue } from './signup-form.model';
 
@@ -29,7 +29,7 @@ export class Signup {
 
     const body: IUserCreateDto = {
       ...reqBody,
-      role: UserRole.USER,
+      // role: UserRole.USER,
     };
 
     return this.authService.signup(body).pipe(
